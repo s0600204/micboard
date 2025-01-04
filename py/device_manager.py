@@ -5,10 +5,10 @@ import atexit
 import sys
 import logging
 
-from networkdevice import ShureNetworkDevice
+
 from channel import chart_update_list, data_update_list
-# from mic import WirelessMic
-# from iem import IEM
+from shure.networkdevice import ShureNetworkDevice
+
 
 NetworkDevices = []
 DeviceMessageQueue = queue.Queue()
@@ -23,12 +23,15 @@ def get_network_device_by_slot(slot):
             if channel.slot == slot:
                 return channel
 
-def check_add_network_device(ip, type):
+def check_add_network_device(manufacturer, ip, type):
     net = get_network_device_by_ip(ip)
     if net:
         return net
 
-    net = ShureNetworkDevice(ip, type)
+    if manufacturer == "Shure":
+        net = ShureNetworkDevice(ip, type)
+    else:
+        logging.critical(f"Unrecognised Device manufacturer {manufacturer}")
     NetworkDevices.append(net)
     return net
 

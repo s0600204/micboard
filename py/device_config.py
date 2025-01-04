@@ -2,6 +2,7 @@ BASE_CONST = {}
 
 
 BASE_CONST['uhfr'] = {
+    'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
     'PROTOCOL': 'UDP',
     'ch_const' : {
@@ -33,6 +34,7 @@ BASE_CONST['uhfr'] = {
 }
 
 BASE_CONST['qlxd'] = {
+    'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
     'PROTOCOL' : 'TCP',
     'ch_const' : {
@@ -64,6 +66,7 @@ BASE_CONST['qlxd'] = {
 }
 
 BASE_CONST['ulxd'] = {
+    'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
     'PROTOCOL': 'TCP',
     'ch_const' : {
@@ -100,6 +103,7 @@ BASE_CONST['ulxd'] = {
 }
 
 BASE_CONST['axtd'] = {
+    'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
     'PROTOCOL': 'TCP',
     'ch_const' : {
@@ -129,6 +133,7 @@ BASE_CONST['axtd'] = {
 }
 
 BASE_CONST['p10t'] = {
+    'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'IEM',
     'PROTOCOL': 'TCP',
     'ch_const' : {

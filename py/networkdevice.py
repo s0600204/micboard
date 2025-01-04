@@ -12,7 +12,7 @@ from mic import WirelessMic
 PORT = 2202
 
 
-class ShureNetworkDevice:
+class NetworkDevice:
     def __init__(self, ip, type):
         self.ip = ip
         self.type = type
