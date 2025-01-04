@@ -6,7 +6,7 @@ import logging
 
 from device_config import BASE_CONST
 from iem import IEM
-from mic import WirelessMic
+import mic
 
 
 PORT = 2202
@@ -63,8 +63,11 @@ class NetworkDevice:
         #     print("Disconnected from {} at {}".format(self.ip,datetime.datetime.now()))
 
     def add_channel_device(self, cfg):
-        if BASE_CONST[self.type]['DEVICE_CLASS'] == 'WirelessMic':
-            self.channels.append(WirelessMic(self, cfg))
+        if 'CHANNEL_CLASS' in BASE_CONST[self.type]:
+            py_class = getattr(mic, BASE_CONST[self.type]['CHANNEL_CLASS'])
+            self.channels.append(py_class(self, cfg))
+        elif BASE_CONST[self.type]['DEVICE_CLASS'] == 'WirelessMic':
+            self.channels.append(mic.WirelessMic(self, cfg))
         elif BASE_CONST[self.type]['DEVICE_CLASS'] == 'IEM':
             self.channels.append(IEM(self, cfg))
 

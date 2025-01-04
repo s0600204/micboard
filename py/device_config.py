@@ -4,6 +4,7 @@ BASE_CONST = {}
 BASE_CONST['uhfr'] = {
     'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
+    'CHANNEL_CLASS' : 'WirelessUHFRMic',
     'PROTOCOL': 'UDP',
     'ch_const' : {
         'battery': 'TX_BAT',
@@ -36,6 +37,7 @@ BASE_CONST['uhfr'] = {
 BASE_CONST['qlxd'] = {
     'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
+    'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL' : 'TCP',
     'ch_const' : {
         'battery': 'BATT_BARS',
@@ -68,6 +70,7 @@ BASE_CONST['qlxd'] = {
 BASE_CONST['ulxd'] = {
     'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
+    'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL': 'TCP',
     'ch_const' : {
         'battery': 'BATT_BARS',
@@ -105,6 +108,7 @@ BASE_CONST['ulxd'] = {
 BASE_CONST['axtd'] = {
     'MANUFACTURER' : 'Shure',
     'DEVICE_CLASS' : 'WirelessMic',
+    'CHANNEL_CLASS' : 'WirelessAXTDMic',
     'PROTOCOL': 'TCP',
     'ch_const' : {
         'battery': 'TX_BATT_BARS',
