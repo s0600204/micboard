@@ -1,6 +1,14 @@
+import enum
 import logging
 
 from mic.mic import BATTERY_TIMEOUT, PEAK_TIMEOUT, WirelessMic
+
+
+class ShureMicReportEnum(enum.Enum):
+    PowerLock = enum.auto()
+    RFLevel = enum.auto()
+    Runtime = enum.auto()
+    TXQuality = enum.auto()
 
 
 class WirelessShureMic(WirelessMic):
@@ -13,30 +21,23 @@ class WirelessShureMic(WirelessMic):
         self.runtime = ''
         self.tx_offset = 255
 
+        self.report_map = {
+            **self.report_map,
+            ShureMicReportEnum.PowerLock: self.set_power_lock,
+            ShureMicReportEnum.RFLevel: self.set_rf_level,
+            ShureMicReportEnum.Runtime: self.set_runtime,
+            ShureMicReportEnum.TXQuality: self.set_tx_quality,
+        }
+
     def ch_json(self):
         return {
             **super().ch_json(),
             'power_lock': self.power_lock,
             'quality': self.quality,
+            'rf_level': self.rf_level,
             'runtime': self.runtime,
             'status': self.tx_state(),
         }
-
-    def parse_report(self, split):
-        if split[2] == self.CHCONST['battery']:
-            self.set_battery(split[3])
-        elif split[2] == self.CHCONST['runtime']:
-            self.set_runtime(split[3])
-        elif split[2] == self.CHCONST['name']:
-            self.set_chan_name_raw(' '.join(split[3:]))
-        elif split[2] == self.CHCONST['quality']:
-            self.set_tx_quality(split[3])
-        elif split[2] == self.CHCONST['frequency']:
-            self.set_frequency(split[3])
-        elif split[2] == self.CHCONST['tx_offset']:
-            self.set_tx_offset(split[3])
-        elif split[2] == self.CHCONST['power_lock']:
-            self.set_power_lock(split[3])
 
     def process_audio_bitmap(self, bitmap):
         bitmap = int(bitmap)
@@ -52,6 +53,9 @@ class WirelessShureMic(WirelessMic):
         if 1 <= level <= 5:
             self.prev_battery = level
             self.timestamp = time.time()
+
+    def set_chan_name_raw(self, *new_name):
+        super().set_chan_name_raw(' '.join(new_name))
 
     def set_power_lock(self, power_lock):
         if power_lock in ['OFF', 'UNKN', 'UNKNOWN', 'NONE']:

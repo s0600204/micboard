@@ -89,7 +89,7 @@ class ChannelDevice:
                 chart_update_list.append(self.chart_json())
 
             if split[0] in ['REP', 'REPLY', 'REPORT']:
-                self.parse_report(split)
+                self.parse_report(split[2], split[3:])
 
                 if self not in data_update_list:
                     data_update_list.append(self)
@@ -97,3 +97,8 @@ class ChannelDevice:
         except Exception as e:
             print("Index Error(TX): {}".format(data.split()))
             print(e)
+
+    def parse_report(self, key, values):
+        if key not in self.REPORT_MAPPING or self.REPORT_MAPPING[key] not in self.report_map:
+            return
+        self.report_map[self.REPORT_MAPPING[key]](*values)

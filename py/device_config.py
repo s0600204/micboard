@@ -6,15 +6,7 @@ BASE_CONST['uhfr'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessUHFRMic',
     'PROTOCOL': 'UDP',
-    'ch_const' : {
-        'battery': 'TX_BAT',
-        'quality': 'NOTSUPPORTED',
-        'frequency': 'FREQUENCY',
-        'name': 'CHAN_NAME',
-        'tx_offset': 'NOTQWERT',
-        'power_lock': 'NOTQWERT',
-        'runtime' : 'NOTQWERT',
-    },
+    'ch_const' : {},
     'base_const': {
         'getAll' : [
             '* GET {} CHAN_NAME *',
@@ -39,18 +31,7 @@ BASE_CONST['qlxd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL' : 'TCP',
-    'ch_const' : {
-        'battery': 'BATT_BARS',
-        'quality': 'NOTSUPPOTTED',
-        'frequency': 'FREQUENCY',
-        'audio_level': 'AUDIO_LVL',
-        'rf_level': 'RX_RF_LVL',
-        'name': 'CHAN_NAME',
-        'antenna': 'RF_ANTENNA',
-        'tx_offset' : 'TX_OFFSET',
-        'power_lock': 'TX_PWR_LOCK',
-        'runtime' : 'BATT_RUN_TIME',
-        },
+    'ch_const' : {},
     'base_const' : {
         'getAll' : ['< GET {} ALL >'],
         'query' : [
@@ -72,18 +53,7 @@ BASE_CONST['ulxd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL': 'TCP',
-    'ch_const' : {
-        'battery': 'BATT_BARS',
-        'quality': 'NOT_SUPPORTED',
-        'frequency': 'FREQUENCY',
-        'audio_level': 'AUDIO_LVL',
-        'rf_level': 'RX_RF_LVL',
-        'name': 'CHAN_NAME',
-        'antenna': 'RF_ANTENNA',
-        'tx_offset' : 'TX_OFFSET',
-        'power_lock': 'TX_PWR_LOCK',
-        'runtime' : 'BATT_RUN_TIME',
-    },
+    'ch_const' : {},
     'base_const': {
         'getAll' : ['< GET {} ALL >'],
         'query' : [
@@ -110,18 +80,7 @@ BASE_CONST['axtd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessAXTDMic',
     'PROTOCOL': 'TCP',
-    'ch_const' : {
-        'battery': 'TX_BATT_BARS',
-        'quality': 'CHAN_QUALITY',
-        'frequency': 'FREQUENCY',
-        'audio_level': 'AUDIO_LEVEL_RMS',
-        'rf_level': 'RSSI',
-        'name': 'CHAN_NAME',
-        'antenna': 'ANTENNA_STATUS',
-        'tx_offset': 'TX_OFFSET',
-        'power_lock': 'TX_LOCK',
-        'runtime' : 'TX_BATT_MINS',
-    },
+    'ch_const' : {},
     'base_const' : {
         'getAll' : ['< GET {} ALL >'],
         'query' : [

@@ -1,6 +1,7 @@
 import logging
 
-from shure.mic import WirelessShureMic
+from mic.mic import WirelessMicReportEnum
+from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 
 PEAK_LEVEL = {
@@ -9,7 +10,16 @@ PEAK_LEVEL = {
 }
 
 class WirelessQULXDMic(WirelessShureMic):
-    
+
+    REPORT_MAPPING = {
+        'BATT_BARS'     : WirelessMicReportEnum.Battery,
+        'BATT_RUN_TIME' : ShureMicReportEnum.Runtime,
+        'CHAN_NAME'     : WirelessMicReportEnum.Name,
+        'FREQUENCY'     : WirelessMicReportEnum.Frequency,
+        'TX_OFFSET'     : WirelessMicReportEnum.TXOffset,
+        'TX_PWR_LOCK'   : ShureMicReportEnum.PowerLock,
+    }
+
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 

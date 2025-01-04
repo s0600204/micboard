@@ -1,3 +1,4 @@
+import enum
 import time
 import logging
 from math import ceil
@@ -10,6 +11,14 @@ from channel import ChannelDevice, data_update_list
 BATTERY_TIMEOUT = 30*60
 PEAK_TIMEOUT = 10
 
+
+class WirelessMicReportEnum(enum.Enum):
+    AFLevel = enum.auto()
+    Antenna = enum.auto()
+    Battery = enum.auto()
+    Frequency = enum.auto()
+    Name = enum.auto()
+    TXOffset = enum.auto()
 
 # https://stackoverflow.com/questions/17027878/algorithm-to-find-the-most-significant-bit
 def MSB(audio_level):
@@ -30,6 +39,15 @@ class WirelessMic(ChannelDevice):
         self.peakstamp = time.time() - 60
         self.tx_offset = 255
 
+        self.report_map = {
+            WirelessMicReportEnum.AFLevel: self.set_audio_level,
+            WirelessMicReportEnum.Antenna: self.set_antenna,
+            WirelessMicReportEnum.Battery: self.set_battery,
+            WirelessMicReportEnum.Frequency: self.set_frequency,
+            WirelessMicReportEnum.Name: self.set_chan_name_raw,
+            WirelessMicReportEnum.TXOffset: self.set_tx_offset,
+        }
+
     def set_antenna(self, antenna):
         self.antenna = antenna
 
@@ -39,9 +57,6 @@ class WirelessMic(ChannelDevice):
             data_update_list.append(self)
 
     def set_audio_level(self, audio_level):
-        pass
-
-    def set_rf_level(self, rf_level):
         pass
 
     def set_battery(self, level):
@@ -56,7 +71,6 @@ class WirelessMic(ChannelDevice):
             'antenna': self.antenna,
             'audio_level': self.audio_level,
             'battery': self.battery,
-            'rf_level': self.rf_level,
             'tx_offset': self.tx_offset,
         }
 
@@ -76,7 +90,4 @@ class WirelessMic(ChannelDevice):
         }
 
     def parse_sample(self, split):
-        pass
-
-    def parse_report(self, split):
         pass

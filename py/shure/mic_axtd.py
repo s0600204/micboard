@@ -1,10 +1,24 @@
 import logging
 
-from shure.mic import WirelessShureMic
+from mic.mic import WirelessMicReportEnum
+from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 
 class WirelessAXTDMic(WirelessShureMic):
     
+    REPORT_MAPPING = {
+        'ANTENNA_STATUS'  : WirelessMicReportEnum.Antenna,
+        'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
+        'CHAN_NAME'       : WirelessMicReportEnum.Name,
+        'CHAN_QUALITY'    : ShureMicReportEnum.TXQuality,
+        'FREQUENCY'       : WirelessMicReportEnum.Frequency,
+        'RSSI'            : ShureMicReportEnum.RFLevel,
+        'TX_BATT_BARS'    : WirelessMicReportEnum.Battery,
+        'TX_BATT_MINS'    : ShureMicReportEnum.Runtime,
+        'TX_LOCK'         : ShureMicReportEnum.PowerLock,
+        'TX_OFFSET'       : WirelessMicReportEnum.TXOffset,
+    }
+
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 

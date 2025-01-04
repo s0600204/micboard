@@ -1,11 +1,17 @@
 import logging
 
-from mic.mic import MSB
-from shure.mic import WirelessShureMic
+from mic.mic import MSB, WirelessMicReportEnum
+from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 
 class WirelessUHFRMic(WirelessShureMic):
-    
+
+    REPORT_MAPPING = {
+        'CHAN_NAME' : WirelessMicReportEnum.Name,
+        'FREQUENCY' : WirelessMicReportEnum.Frequency,
+        'TX_BAT'    : WirelessMicReportEnum.Battery,
+    }
+
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 
