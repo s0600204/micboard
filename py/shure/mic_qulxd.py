@@ -1,4 +1,5 @@
-from shure.mic import WirelessShureMic
+from mic import WirelessMicReportEnum
+from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 
 PEAK_LEVEL = {
@@ -7,6 +8,15 @@ PEAK_LEVEL = {
 }
 
 class WirelessQULXDMic(WirelessShureMic):
+
+    REPORT_MAPPING = {
+        'BATT_BARS'     : WirelessMicReportEnum.Battery,
+        'BATT_RUN_TIME' : ShureMicReportEnum.Runtime,
+        'CHAN_NAME'     : WirelessMicReportEnum.Name,
+        'FREQUENCY'     : WirelessMicReportEnum.Frequency,
+        'TX_OFFSET'     : WirelessMicReportEnum.TXOffset,
+        'TX_PWR_LOCK'   : ShureMicReportEnum.PowerLock,
+    }
 
     def parse_sample(self, split):
         self.set_antenna(split[3])

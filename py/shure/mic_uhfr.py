@@ -1,10 +1,16 @@
 from math import ceil
 
-from mic import MSB
+from mic import MSB, WirelessMicReportEnum
 from shure.mic import WirelessShureMic
 
 
 class WirelessUHFRMic(WirelessShureMic):
+
+    REPORT_MAPPING = {
+        'CHAN_NAME' : WirelessMicReportEnum.Name,
+        'FREQUENCY' : WirelessMicReportEnum.Frequency,
+        'TX_BAT'    : WirelessMicReportEnum.Battery,
+    }
 
     def parse_sample(self, split):
         self.set_antenna(split[3])
