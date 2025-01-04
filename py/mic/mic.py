@@ -51,15 +51,13 @@ class WirelessMic(ChannelDevice):
         pass
 
     def ch_json(self):
-        name = self.get_chan_name()
         return {
-            'id': name[0], 'name': name[1], 'channel': self.channel,
-            'antenna':self.antenna, 'audio_level': self.audio_level,
-            'rf_level': self.rf_level, 'frequency': self.frequency,
-            'battery':self.battery, 'tx_offset': self.tx_offset, 'quality': self.quality,
-            'status': self.tx_state(), 'slot': self.slot, 'raw': self.raw,
-            'type': self.rx.type, 'name_raw' : self.chan_name_raw,
-            'power_lock': self.power_lock, 'runtime' : self.runtime
+            **super().ch_json(),
+            'antenna': self.antenna,
+            'audio_level': self.audio_level,
+            'battery': self.battery,
+            'rf_level': self.rf_level,
+            'tx_offset': self.tx_offset,
         }
 
     def ch_json_mini(self):

@@ -66,6 +66,19 @@ class ChannelDevice:
 
         return (chan_id, chan_name)
 
+    def ch_json(self):
+        name = self.get_chan_name()
+        return {
+            'channel': self.channel,
+            'frequency': self.frequency,
+            'id': name[0],
+            'name': name[1],
+            'name_raw': self.chan_name_raw,
+            'raw': self.raw,
+            'slot': self.slot,
+            'type': self.rx.type,
+        }
+
     def parse_raw_ch(self, data):
         split = data.split()
         self.raw[split[2]] = ' '.join(split[3:])

@@ -13,6 +13,15 @@ class WirelessShureMic(WirelessMic):
         self.runtime = ''
         self.tx_offset = 255
 
+    def ch_json(self):
+        return {
+            **super().ch_json(),
+            'power_lock': self.power_lock,
+            'quality': self.quality,
+            'runtime': self.runtime,
+            'status': self.tx_state(),
+        }
+
     def parse_report(self, split):
         if split[2] == self.CHCONST['battery']:
             self.set_battery(split[3])
