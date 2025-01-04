@@ -9,10 +9,11 @@ from iem import IEM
 import mic
 
 
-PORT = 2202
-
-
 class NetworkDevice:
+
+    PORT = None
+    ENCODING = 'UTF-8'
+
     def __init__(self, ip, type):
         self.ip = ip
         self.type = type
@@ -29,7 +30,7 @@ class NetworkDevice:
             if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #TCP
                 self.f.settimeout(.2)
-                self.f.connect((self.ip, PORT))
+                self.f.connect((self.ip, self.PORT))
 
 
             elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
@@ -51,6 +52,12 @@ class NetworkDevice:
         self.set_rx_com_status('DISCONNECTED')
         self.socket_watchdog = int(time.perf_counter())
 
+    def socket_send(self, message):
+        if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
+            self.f.sendall(bytearray(message, self.ENCODING))
+
+        elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
+            self.f.sendto(bytearray(message, self.ENCODING), (self.ip, self.PORT))
 
     def fileno(self):
         return self.f.fileno()

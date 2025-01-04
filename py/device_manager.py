@@ -100,10 +100,7 @@ def SocketService():
             string = rx.writeQueue.get()
             logging.debug("write: %s data: %s", rx.ip, string)
             try:
-                if rx.type in ['qlxd', 'ulxd', 'axtd', 'p10t']:
-                    rx.f.sendall(bytearray(string, 'UTF-8'))
-                elif rx.type == 'uhfr':
-                    rx.f.sendto(bytearray(string, 'UTF-8'), (rx.ip, 2202))
+                rx.socket_send(string)
             except:
                 logging.warning("TX ERROR IP: %s String: %s", rx.ip, string)
 
