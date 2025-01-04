@@ -6,13 +6,15 @@ import logging
 
 from device_config import BASE_CONST
 from iem import IEM
-from mic import WirelessMic
 
 
 PORT = 2202
 
 
 class NetworkDevice:
+
+    DEVICE_CLASS_MAP = {}
+
     def __init__(self, ip, type):
         self.ip = ip
         self.type = type
@@ -63,10 +65,15 @@ class NetworkDevice:
         #     print("Disconnected from {} at {}".format(self.ip,datetime.datetime.now()))
 
     def add_channel_device(self, cfg):
-        if BASE_CONST[self.type]['DEVICE_CLASS'] == 'WirelessMic':
-            self.channels.append(WirelessMic(self, cfg))
-        elif BASE_CONST[self.type]['DEVICE_CLASS'] == 'IEM':
+        if BASE_CONST[self.type].get('DEVICE_CLASS', None) == 'IEM':
             self.channels.append(IEM(self, cfg))
+            return
+
+        device_class = self.DEVICE_CLASS_MAP.get(self.type, None)
+        if not device_class:
+            logging.warn("Unrecognised device type: {}".format(self.type))
+            return
+        self.channels.append(device_class(self, cfg))
 
     def get_device_by_channel(self, channel):
         return next((x for x in self.channels if x.channel == int(channel)), None)
