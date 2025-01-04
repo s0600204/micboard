@@ -7,6 +7,7 @@ import uuid
 import time
 from shutil import copyfile
 
+import device_config
 import device_manager
 import offline
 import tornado_server
@@ -203,8 +204,9 @@ def read_json_config(file):
         config_tree = json.load(config_file)
 
         for chan in config_tree['slots']:
-            if chan['type'] in ['uhfr', 'qlxd', 'ulxd', 'axtd', 'p10t']:
-                netDev = device_manager.check_add_network_device(chan['ip'], chan['type'])
+            if chan['type'] in list(device_config.BASE_CONST.keys()):
+                manufacturer = device_config.BASE_CONST[chan['type']]['MANUFACTURER']
+                netDev = device_manager.check_add_network_device(manufacturer, chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
 
             elif chan['type'] == 'offline':
