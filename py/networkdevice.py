@@ -81,22 +81,15 @@ class NetworkDevice:
     def get_device_by_channel(self, channel):
         return next((x for x in self.channels if x.channel == int(channel)), None)
 
+    def split_raw_rx(self, data):
+        """Split a raw stream of bytes received into the various message stanzas it contains.
+        Dealing with what each line means is begun in the `parse_raw_rx()` method.
+        """
+        return data.split("\n")
+
     def parse_raw_rx(self, data):
-        data = data.strip('< >').strip('* ')
-        data = data.replace('{', '').replace('}', '')
-        data = data.rstrip()
-        split = data.split()
-        if data:
-            try:
-                if split[0] in ['REP', 'REPORT', 'SAMPLE'] and split[1] in ['1', '2', '3', '4']:
-                    ch = self.get_device_by_channel(int(split[1]))
-                    ch.parse_raw_ch(data)
-
-                elif split[0] in ['REP', 'REPORT']:
-                    self.raw[split[1]] = ' '.join(split[2:])
-            except:
-                logging.warning("Index Error(RX): %s", data)
-
+        """Deal with what each line means."""
+        pass
 
     def get_channels(self):
         channels = []
