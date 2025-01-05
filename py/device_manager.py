@@ -77,19 +77,12 @@ def SocketService():
 
         for rx in read_socks:
             try:
-                data = rx.f.recv(1024).decode('UTF-8')
+                data = rx.f.recv(1024)
             except:
                 rx.socket_disconnect()
                 break
-            # print("read: {} data: {}".format(rx.ip,data))
 
-            d = '>'
-            if rx.type == 'uhfr':
-                d = '*'
-            data = [e+d for e in data.split(d) if e]
-
-            for line in data:
-                # rx.parse_raw_rx(line)
+            for line in rx.split_raw_rx(data):
                 DeviceMessageQueue.put((rx, line))
 
             rx.socket_watchdog = int(time.perf_counter())
