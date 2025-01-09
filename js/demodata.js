@@ -9,31 +9,43 @@ let timers = {};
 const batterySample = {
   0: {
     battery: 255,
+    battery_status: 'off',
+    battery_segments: 5,
     status: ['CRITICAL', 'UNASSIGNED', 'RX_COM_ERROR', 'TX_COM_ERROR'],
     runtime_min_max: [0, 0],
   },
   1: {
     battery: 1,
+    battery_status: 'critical',
+    battery_segments: 5,
     status: ['CRITICAL', 'PREV_CRITICAL'],
     runtime_min_max: [0, 1],
   },
   2: {
     battery: 2,
+    battery_status: 'critical',
+    battery_segments: 5,
     status: ['CRITICAL', 'PREV_CRITICAL'],
     runtime_min_max: [1, 2],
   },
   3: {
     battery: 3,
+    battery_status: 'replace',
+    battery_segments: 5,
     status: ['REPLACE', 'PREV_REPLACE'],
     runtime_min_max: [3, 4],
   },
   4: {
     battery: 4,
+    battery_status: 'good',
+    battery_segments: 5,
     status: ['GOOD', 'GOOD', 'PREV_GOOD', 'UNASSIGNED'],
     runtime_min_max: [5, 6],
   },
   5: {
     battery: 5,
+    battery_status: 'good',
+    battery_segments: 5,
     status: ['GOOD', 'GOOD', 'PREV_GOOD'],
     runtime_min_max: [7, 9],
   },
@@ -149,6 +161,8 @@ function randomBatteryGenerator() {
 
   const res = {
     battery: battery.battery,
+    battery_segments: battery.battery_segments,
+    battery_status: battery.battery_status,
     status: battery.status[status_index],
     runtime: randomRuntimeGenerator(battery.runtime_min_max),
   };
@@ -166,6 +180,8 @@ function randomDataGenerator() {
     tx_offset: randomTXOffsetGenerator(),
     frequency: randomFrequencyGenerator(),
     battery: battery.battery,
+    battery_status: battery.battery_status,
+    battery_segments: battery.battery_segments,
     status: battery.status,
     ip: randomIPGenerator(),
     channel: getRandomInt(1, 4),
@@ -241,6 +257,8 @@ function meteteredRandomDataGenerator(update) {
     case 'status': data.battery = battery.battery;
       data.status = battery.status;
       data.runtime = battery.runtime;
+      data.battery_segments = battery.battery_segments;
+      data.battery_status = battery.battery_status;
       break;
     default:
       break;
