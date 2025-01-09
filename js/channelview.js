@@ -123,29 +123,39 @@ function updateIP(slotSelector, data) {
   slotSelector.querySelector('p.rxinfo').innerHTML = data.type + ' CH ' + data.channel;
 }
 
-const BatteryTable = {
-  0: ['batt_led_off', 'batt_led_off', 'batt_led_off', 'batt_led_off', 'batt_led_off'],
-  1: ['batt_led_danger', 'batt_led_off', 'batt_led_off', 'batt_led_off', 'batt_led_off'],
-  2: ['batt_led_danger', 'batt_led_danger', 'batt_led_off', 'batt_led_off', 'batt_led_off'],
-  3: ['batt_led_warning', 'batt_led_warning', 'batt_led_warning', 'batt_led_off', 'batt_led_off'],
-  4: ['batt_led_good', 'batt_led_good', 'batt_led_good', 'batt_led_good', 'batt_led_off'],
-  5: ['batt_led_good', 'batt_led_good', 'batt_led_good', 'batt_led_good', 'batt_led_good'],
-  255: ['batt_led_off', 'batt_led_off', 'batt_led_off', 'batt_led_off', 'batt_led_off'],
-  led: [],
+
+const BatteryStates = {
+  // Keep these keys in sync with the values of `WirelessMicBatteryStates` in py/mic/mic.py
+  'good': 'batt_led_good',
+  'replace': 'batt_led_warning',
+  'critical': 'batt_led_danger',
+  'off': 'batt_led_off',
+
+  // These keys are used locally only
+  'off_critical': 'batt_led_off_danger',
+  'hidden': 'batt_led_hidden',
 };
 
 function updateBattery(slotSelector, data) {
-  const outputBars = BatteryTable[data.battery];
-
-  slotSelector.querySelectorAll('.battery-bar').forEach((b) => {
-    b.classList.remove('batt_led_off', 'batt_led_danger', 'batt_led_warning', 'batt_led_good');
+  const batteryStateValues = Object.values(BatteryStates);
+  const batteryBars = slotSelector.querySelectorAll('.battery-bar');
+  batteryBars.forEach((b) => {
+    b.classList.remove(...batteryStateValues);
   });
 
-  slotSelector.querySelector('.battery-bar-1').classList.add(outputBars[0]);
-  slotSelector.querySelector('.battery-bar-2').classList.add(outputBars[1]);
-  slotSelector.querySelector('.battery-bar-3').classList.add(outputBars[2]);
-  slotSelector.querySelector('.battery-bar-4').classList.add(outputBars[3]);
-  slotSelector.querySelector('.battery-bar-5').classList.add(outputBars[4]);
+  let idx = 1;
+  for (; idx <= Math.min(data.battery, data.battery_segments, batteryBars.length); ++idx) {
+    slotSelector.querySelector('.battery-bar-' + idx).classList.add(BatteryStates[data.battery_status]);
+  }
+  for (; idx <= Math.min(data.battery_segments, batteryBars.length); ++idx) {
+    if (data.battery_status == 'critical')
+      slotSelector.querySelector('.battery-bar-' + idx).classList.add(BatteryStates.off_critical);
+    else
+      slotSelector.querySelector('.battery-bar-' + idx).classList.add(BatteryStates.off);
+  }
+  for (; idx <= batteryBars.length; ++idx) {
+    slotSelector.querySelector('.battery-bar-' + idx).classList.add(BatteryStates.hidden);
+  }
 
   if (micboard.group !== 0) {
     let hideChart = false;

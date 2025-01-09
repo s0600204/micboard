@@ -12,6 +12,13 @@ BATTERY_TIMEOUT = 30*60
 PEAK_TIMEOUT = 10
 
 
+# Keep values in sync with the keys of `BatteryStates` in js/channelview.js
+class WirelessMicBatteryStatus(enum.Enum):
+    Good = 'good'
+    Replace = 'replace'
+    Critical = 'critical'
+    Unknown = 'off'
+
 class WirelessMicReportEnum(enum.Enum):
     AFLevel = enum.auto()
     Antenna = enum.auto()
@@ -29,9 +36,13 @@ def MSB(audio_level):
     return bitpos
 
 class WirelessMic(ChannelDevice):
+
+    BATTERY_SEGMENTS = 5
+
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
         self.battery = 255
+        self.battery_status = WirelessMicBatteryStatus.Unknown
         self.prev_battery = 255
         self.audio_level = 0
         self.rf_level = 0
@@ -71,6 +82,8 @@ class WirelessMic(ChannelDevice):
             'antenna': self.antenna,
             'audio_level': self.audio_level,
             'battery': self.battery,
+            'battery_segments': self.BATTERY_SEGMENTS,
+            'battery_status': self.battery_status.value,
             'tx_offset': self.tx_offset,
         }
 

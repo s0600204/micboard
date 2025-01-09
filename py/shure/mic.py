@@ -1,7 +1,7 @@
 import enum
 import logging
 
-from mic.mic import BATTERY_TIMEOUT, PEAK_TIMEOUT, WirelessMic
+from mic.mic import BATTERY_TIMEOUT, PEAK_TIMEOUT, WirelessMic, WirelessMicBatteryStatus
 
 
 class ShureMicReportEnum(enum.Enum):
@@ -12,6 +12,8 @@ class ShureMicReportEnum(enum.Enum):
 
 
 class WirelessShureMic(WirelessMic):
+
+    BATTERY_SEGMENTS = 5
 
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
@@ -53,6 +55,14 @@ class WirelessShureMic(WirelessMic):
         if 1 <= level <= 5:
             self.prev_battery = level
             self.timestamp = time.time()
+
+        if (time.time() - self.timestamp) < BATTERY_TIMEOUT:
+            if 4 <= self.battery <= 5 or self.battery == 255 and 4 <= self.prev_battery <= 5:
+                self.battery_status = WirelessMicBatteryStatus.Good
+            elif self.battery == 3 or self.battery == 255 and self.prev_battery == 3:
+                self.battery_status = WirelessMicBatteryStatus.Replace
+            elif 0 <= self.battery <= 2 or self.battery == 255 and 0 <= self.prev_battery <= 2:
+                self.battery_status = WirelessMicBatteryStatus.Critical
 
     def set_chan_name_raw(self, *new_name):
         super().set_chan_name_raw(' '.join(new_name))

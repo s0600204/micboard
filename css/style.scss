@@ -90,17 +90,27 @@ html,body {
   box-sizing:border-box;
 }
 
-.batt_led_off{
+.batt_led_hidden {
+  display: none;
+}
+
+.batt_led_off, .batt_led_off_danger {
   background-color: var(--color-black);
+}
+
+.batt_led_off_danger {
+  border-color: var(--color-red);
 }
 
 .batt_led_danger{
   background-color: var(--color-red);
+  border-color: var(--color-red-dark);
 }
 
 .batt_led_warning {
   background-color: var(--color-yellow);
 }
+
 .batt_led_good{
   background-color: var(--color-green);
 }
