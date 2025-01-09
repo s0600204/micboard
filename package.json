@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/karlcswanson/micboard",
   "dependencies": {
-    "@babel/core": "^7.16.7",
     "@ibm/plex": "^6.0.0",
     "@shopify/draggable": "^1.0.0-beta.8",
     "bootstrap": "^5.1.3",
