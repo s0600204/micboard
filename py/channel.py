@@ -5,7 +5,6 @@ from collections import defaultdict
 import logging
 
 import config
-from device_config import BASE_CONST
 
 chart_update_list = []
 data_update_list = []
@@ -29,7 +28,6 @@ class ChannelDevice:
         self.frequency = '000000'
         self.slot = cfg['slot']
         self.raw = defaultdict(dict)
-        self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
 
         self.report_map = {
             ChannelDeviceReportEnum.Frequency: self.set_frequency,

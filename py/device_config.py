@@ -4,7 +4,6 @@ BASE_CONST = {}
 BASE_CONST['uhfr'] = {
     'MANUFACTURER' : 'Shure',
     'PROTOCOL': 'UDP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'UR4S' : 1,
         'UR4D' : 2,
@@ -14,7 +13,6 @@ BASE_CONST['uhfr'] = {
 BASE_CONST['qlxd'] = {
     'MANUFACTURER' : 'Shure',
     'PROTOCOL' : 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'QLX-DSingle' : 1,
         'QLX-D1GSingle' : 1,
@@ -26,7 +24,6 @@ BASE_CONST['qlxd'] = {
 BASE_CONST['ulxd'] = {
     'MANUFACTURER' : 'Shure',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'ULX-DSingle': 1,
         'ULX-D1GSingle' : 1,
@@ -43,7 +40,6 @@ BASE_CONST['ulxd'] = {
 BASE_CONST['axtd'] = {
     'MANUFACTURER' : 'Shure',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'AD4D': 2,
         'AD4Q': 4,
@@ -53,7 +49,6 @@ BASE_CONST['axtd'] = {
 BASE_CONST['p10t'] = {
     'MANUFACTURER' : 'Shure',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'PSM1KTx': 2,
     }
