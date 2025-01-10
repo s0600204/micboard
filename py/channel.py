@@ -26,7 +26,6 @@ class ChannelDevice:
         self.frequency = '000000'
         self.slot = cfg['slot']
         self.raw = defaultdict(dict)
-        self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
 
         self.report_map = {
             ChannelDeviceReportEnum.Frequency: self.set_frequency,

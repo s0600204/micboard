@@ -6,7 +6,6 @@ BASE_CONST['uhfr'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessUHFRMic',
     'PROTOCOL': 'UDP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'UR4S' : 1,
         'UR4D' : 2,
@@ -18,7 +17,6 @@ BASE_CONST['qlxd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL' : 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'QLX-DSingle' : 1,
         'QLX-D1GSingle' : 1,
@@ -32,7 +30,6 @@ BASE_CONST['ulxd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessQULXDMic',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'ULX-DSingle': 1,
         'ULX-D1GSingle' : 1,
@@ -51,7 +48,6 @@ BASE_CONST['axtd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessAXTDMic',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'AD4D': 2,
         'AD4Q': 4,
@@ -63,7 +59,6 @@ BASE_CONST['p10t'] = {
     'DEVICE_CLASS' : 'IEM',
     'CHANNEL_CLASS' : 'WirelessP10tIEM',
     'PROTOCOL': 'TCP',
-    'ch_const' : {},
     'DCID_MODEL' : {
         'PSM1KTx': 2,
     }
