@@ -1,5 +1,6 @@
 import logging
 
+from channel import ChannelDeviceReportEnum
 from mic.mic import WirelessMicReportEnum
 from shure.mic import ShureMicReportEnum, WirelessShureMic
 
@@ -15,8 +16,8 @@ class WirelessQULXDMic(WirelessShureMic):
     REPORT_MAPPING = {
         'BATT_BARS'     : WirelessMicReportEnum.Battery,
         'BATT_RUN_TIME' : ShureMicReportEnum.Runtime,
-        'CHAN_NAME'     : WirelessMicReportEnum.Name,
-        'FREQUENCY'     : WirelessMicReportEnum.Frequency,
+        'CHAN_NAME'     : ChannelDeviceReportEnum.Name,
+        'FREQUENCY'     : ChannelDeviceReportEnum.Frequency,
         'TX_OFFSET'     : WirelessMicReportEnum.TXOffset,
         'TX_PWR_LOCK'   : ShureMicReportEnum.PowerLock,
     }

@@ -72,9 +72,6 @@ class WirelessShureMic(WirelessMic):
             elif 0 <= self.battery <= 2 or self.battery == 255 and 0 <= self.prev_battery <= 2:
                 self.battery_status = WirelessMicBatteryStatus.Critical
 
-    def set_chan_name_raw(self, *new_name):
-        super().set_chan_name_raw(' '.join(new_name))
-
     def set_power_lock(self, power_lock):
         if power_lock in ['OFF', 'UNKN', 'UNKNOWN', 'NONE']:
             self.power_lock = 'OFF'

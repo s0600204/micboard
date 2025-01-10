@@ -1,5 +1,6 @@
 import logging
 
+from channel import ChannelDeviceReportEnum
 from mic.mic import WirelessMicReportEnum
 from shure.mic import ShureMicReportEnum, WirelessShureMic
 
@@ -10,9 +11,9 @@ class WirelessAXTDMic(WirelessShureMic):
     REPORT_MAPPING = {
         'ANTENNA_STATUS'  : WirelessMicReportEnum.Antenna,
         'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
-        'CHAN_NAME'       : WirelessMicReportEnum.Name,
+        'CHAN_NAME'       : ChannelDeviceReportEnum.Name,
         'CHAN_QUALITY'    : ShureMicReportEnum.TXQuality,
-        'FREQUENCY'       : WirelessMicReportEnum.Frequency,
+        'FREQUENCY'       : ChannelDeviceReportEnum.Frequency,
         'RSSI'            : WirelessMicReportEnum.RFLevels,
         'TX_BATT_BARS'    : WirelessMicReportEnum.Battery,
         'TX_BATT_MINS'    : ShureMicReportEnum.Runtime,

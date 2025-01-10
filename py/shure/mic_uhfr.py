@@ -1,5 +1,6 @@
 import logging
 
+from channel import ChannelDeviceReportEnum
 from mic.mic import MSB, WirelessMicReportEnum
 from shure.mic import ShureMicReportEnum, WirelessShureMic
 
@@ -8,8 +9,8 @@ class WirelessUHFRMic(WirelessShureMic):
 
     ANTENNA_COUNT = 2
     REPORT_MAPPING = {
-        'CHAN_NAME' : WirelessMicReportEnum.Name,
-        'FREQUENCY' : WirelessMicReportEnum.Frequency,
+        'CHAN_NAME' : ChannelDeviceReportEnum.Name,
+        'FREQUENCY' : ChannelDeviceReportEnum.Frequency,
         'TX_BAT'    : WirelessMicReportEnum.Battery,
     }
 

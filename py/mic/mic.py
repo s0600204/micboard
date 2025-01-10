@@ -23,8 +23,6 @@ class WirelessMicReportEnum(enum.Enum):
     AFLevel = enum.auto()
     Antenna = enum.auto()
     Battery = enum.auto()
-    Frequency = enum.auto()
-    Name = enum.auto()
     RFLevels = enum.auto()
     TXOffset = enum.auto()
 
@@ -53,11 +51,10 @@ class WirelessMic(ChannelDevice):
         self.tx_offset = 255
 
         self.report_map = {
+            **self.report_map,
             WirelessMicReportEnum.AFLevel: self.set_audio_level,
             WirelessMicReportEnum.Antenna: self.set_antenna,
             WirelessMicReportEnum.Battery: self.set_battery,
-            WirelessMicReportEnum.Frequency: self.set_frequency,
-            WirelessMicReportEnum.Name: self.set_chan_name_raw,
             WirelessMicReportEnum.RFLevels: self.set_rf_levels,
             WirelessMicReportEnum.TXOffset: self.set_tx_offset,
         }

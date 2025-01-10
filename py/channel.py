@@ -1,3 +1,4 @@
+import enum
 import time
 import re
 from collections import defaultdict
@@ -8,6 +9,11 @@ from device_config import BASE_CONST
 
 chart_update_list = []
 data_update_list = []
+
+
+class ChannelDeviceReportEnum(enum.Enum):
+    Frequency = enum.auto()
+    Name = enum.auto()
 
 
 class ChannelDevice:
@@ -21,6 +27,11 @@ class ChannelDevice:
         self.slot = cfg['slot']
         self.raw = defaultdict(dict)
         self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
+
+        self.report_map = {
+            ChannelDeviceReportEnum.Frequency: self.set_frequency,
+            ChannelDeviceReportEnum.Name: self.set_chan_name_raw,
+        }
 
     def build_get_all_strings(self):
         return []
@@ -37,7 +48,8 @@ class ChannelDevice:
     def set_frequency(self, frequency):
         self.frequency = frequency[:3] + '.' + frequency[3:]
 
-    def set_chan_name_raw(self, chan_name):
+    def set_chan_name_raw(self, *chan_name):
+        chan_name = ' '.join(chan_name)
         chan_name = chan_name.replace('_', ' ')
         self.chan_name_raw = chan_name
 
