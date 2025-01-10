@@ -6,12 +6,15 @@ from shure.mic_axtd import WirelessAXTDMic
 from shure.mic_qulxd import WirelessQULXDMic
 from shure.mic_uhfr import WirelessUHFRMic
 
+from shure.iem_p10t import WirelessP10tIEM
+
 
 class ShureNetworkDevice(NetworkDevice):
 
     PORT = 2202
     DEVICE_CLASS_MAP = {
         'axtd': WirelessAXTDMic,
+        'p10t': WirelessP10tIEM,
         'qlxd': WirelessQULXDMic,
         'uhfr': WirelessUHFRMic,
         'ulxd': WirelessQULXDMic,

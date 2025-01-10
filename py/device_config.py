@@ -52,15 +52,8 @@ BASE_CONST['axtd'] = {
 
 BASE_CONST['p10t'] = {
     'MANUFACTURER' : 'Shure',
-    'DEVICE_CLASS' : 'IEM',
     'PROTOCOL': 'TCP',
-    'ch_const' : {
-        'frequency': 'FREQUENCY',
-        'audio_level_l': 'AUDIO_IN_LVL_L',
-        'audio_level_r': 'AUDIO_IN_LVL_R',
-        'name': 'CHAN_NAME',
-        'tx_offset': 'TX_OFFSET'
-    },
+    'ch_const' : {},
     'DCID_MODEL' : {
         'PSM1KTx': 2,
     }

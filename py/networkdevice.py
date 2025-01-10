@@ -5,7 +5,6 @@ from collections import defaultdict
 import logging
 
 from device_config import BASE_CONST
-from iem import IEM
 
 
 class NetworkDevice:
@@ -70,10 +69,6 @@ class NetworkDevice:
         #     print("Disconnected from {} at {}".format(self.ip,datetime.datetime.now()))
 
     def add_channel_device(self, cfg):
-        if BASE_CONST[self.type].get('DEVICE_CLASS', None) == 'IEM':
-            self.channels.append(IEM(self, cfg))
-            return
-
         device_class = self.DEVICE_CLASS_MAP.get(self.type, None)
         if not device_class:
             logging.warn("Unrecognised device type: {}".format(self.type))
