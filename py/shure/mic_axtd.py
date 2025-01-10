@@ -6,13 +6,14 @@ from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 class WirelessAXTDMic(WirelessShureMic):
     
+    ANTENNA_COUNT = 4
     REPORT_MAPPING = {
         'ANTENNA_STATUS'  : WirelessMicReportEnum.Antenna,
         'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
         'CHAN_NAME'       : WirelessMicReportEnum.Name,
         'CHAN_QUALITY'    : ShureMicReportEnum.TXQuality,
         'FREQUENCY'       : WirelessMicReportEnum.Frequency,
-        'RSSI'            : ShureMicReportEnum.RFLevel,
+        'RSSI'            : WirelessMicReportEnum.RFLevels,
         'TX_BATT_BARS'    : WirelessMicReportEnum.Battery,
         'TX_BATT_MINS'    : ShureMicReportEnum.Runtime,
         'TX_LOCK'         : ShureMicReportEnum.PowerLock,
@@ -24,7 +25,11 @@ class WirelessAXTDMic(WirelessShureMic):
 
     def parse_sample(self, split):
         self.set_antenna(split[7])
-        self.set_rf_level(split[9])
+        self.set_rf_levels(0, split[9])
+        self.set_rf_levels(1, split[11])
+        # If in "Quadversity" mode:
+        #self.set_rf_levels(2, split[13])
+        #self.set_rf_levels(3, split[15])
         self.set_audio_level(split[6])
         self.set_tx_quality(split[3])
         # TO TEST
@@ -36,8 +41,8 @@ class WirelessAXTDMic(WirelessShureMic):
     def set_frequency(self, frequency):
         super().set_frequency(frequency.lstrip('0'))
 
-    def set_rf_level(self, rf_level):
-        self.rf_level = int(100 * (float(rf_level) / 115))
+    def set_rf_levels(self, antenna, rf_level):
+        self.rf_levels[antenna] = int(100 * (float(rf_level) / 115))
 
     def set_tx_offset(self, tx_offset):
         if tx_offset != '255':

@@ -51,7 +51,10 @@ const batterySample = {
   },
 };
 
-const rfSample = ['AX', 'XB', 'XX', 'BRXX', 'XRXB', 'XXBR'];
+const rfSample = {
+  2: ['AX', 'XB', 'XX'],
+  4: ['BRXX', 'XRXB', 'XXBR', 'BXXR'],
+}
 
 
 const name_sample = [
@@ -113,8 +116,8 @@ function uniqueRandomNameGenerator(slot) {
   // return output;
 }
 
-function randomRfSampleGenerator() {
-  return rfSample[getRandomInt(0, 5)];
+function randomRfSampleGenerator(antenna_count) {
+  return rfSample[antenna_count][getRandomInt(0, rfSample[antenna_count].length - 1)];
 }
 
 function randomAudioGenerator() {
@@ -171,12 +174,13 @@ function randomBatteryGenerator() {
 
 function randomDataGenerator() {
   const battery = randomBatteryGenerator();
+  const antenna_count = [2, 4][getRandomInt(0, 1)];
 
   const res = {
     name: randomNameGenerator(),
-    antenna: randomRfSampleGenerator(),
+    antenna: randomRfSampleGenerator(antenna_count),
     audio_level: randomAudioGenerator(),
-    rf_level: randomRfGenerator(),
+    rf_levels: [],
     tx_offset: randomTXOffsetGenerator(),
     frequency: randomFrequencyGenerator(),
     battery: battery.battery,
@@ -187,6 +191,9 @@ function randomDataGenerator() {
     channel: getRandomInt(1, 4),
     type: randomTypeGenerator(),
   };
+  for (let idx = 0; idx < antenna_count; ++idx) {
+    res.rf_levels.push(randomRfGenerator());
+  }
   return res;
 }
 
@@ -245,7 +252,7 @@ function meteteredRandomDataGenerator(update) {
   switch (update) {
     case 'name': data.name = uniqueRandomNameGenerator(slot);
       break;
-    case 'antenna': data.antenna = randomRfSampleGenerator();
+    case 'antenna': data.antenna = randomRfSampleGenerator(data.rf_levels.length);
       break;
     case 'tx_offset': data.tx_offset = randomTXOffsetGenerator();
       break;
@@ -272,7 +279,8 @@ function randomCharts() {
     if (n !== 0) {
       const data = JSON.parse(JSON.stringify(micboard.transmitters[n]));
       data.audio_level = randomAudioGenerator();
-      data.rf_level = randomRfGenerator();
+      for (let idx = 0; idx < data.rf_levels.length; ++idx)
+        data.rf_levels[idx] = randomRfGenerator();
       data.timestamp = unixtimestamp();
       updateChart(data);
     }
