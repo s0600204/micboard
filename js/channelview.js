@@ -99,12 +99,25 @@ function updateName(slotSelector, data) {
   updateBackground(slotSelector.querySelector('.mic_name'));
 }
 
+/* Possible values of `data.status`:
+     'RX_COM_ERROR', 'AUDIO_PEAK', 'TX_COM_ERROR', 'TX_OFF', 'OK'
+
+   For values of `data.battery_status`, see the keys of `BatteryStates` below.
+*/
 function updateStatus(slotSelector, data) {
+  let status_class = data.status;
+  if (['OK', 'TX_OFF'].includes(data.status) && data.battery_status != 'off') {
+    status_class = data.battery_status.toUpperCase()
+    if (data.status == 'TX_OFF') {
+      status_class = 'PREV_' + status_class;
+    }
+  }
+
   slotSelector.querySelector('div.mic_name').className = 'mic_name';
-  slotSelector.querySelector('div.mic_name').classList.add(data.status);
+  slotSelector.querySelector('div.mic_name').classList.add(status_class);
 
   slotSelector.querySelector('div.electrode').className = 'electrode';
-  slotSelector.querySelector('div.electrode').classList.add(data.status);
+  slotSelector.querySelector('div.electrode').classList.add(status_class);
 
   if (micboard.settingsMode !== 'EXTENDED') {
     if (data.status === 'RX_COM_ERROR') {
@@ -220,6 +233,7 @@ function updateSelector(slotSelector, data) {
   });
   updateCheck(data, 'battery', () => {
     updateBattery(slotSelector, data);
+    updateStatus(slotSelector, data);
   });
   updateCheck(data, 'runtime', () => {
     updateRuntime(slotSelector, data);
