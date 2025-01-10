@@ -8,6 +8,7 @@ import logging
 
 
 from channel import chart_update_list, data_update_list
+from sennheiser.networkdevice import SennheiserNetworkDevice
 from shure.networkdevice import ShureNetworkDevice
 from util import WIRELESS_QUERY_QUEUE_INTERVAL
 
@@ -30,7 +31,9 @@ def check_add_network_device(manufacturer, ip, type):
     if net:
         return net
 
-    if manufacturer == "Shure":
+    if manufacturer == "Sennheiser":
+        net = SennheiserNetworkDevice(ip, type)
+    elif manufacturer == "Shure":
         net = ShureNetworkDevice(ip, type)
     else:
         logging.critical(f"Unrecognised Device manufacturer {manufacturer}")

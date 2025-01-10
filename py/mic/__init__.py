@@ -1,5 +1,5 @@
 
-from .mic import WirelessMic
+from sennheiser.mic_mcp import WirelessMCPMic
 
 from shure.mic_axtd import WirelessAXTDMic
 from shure.mic_qulxd import WirelessQULXDMic

@@ -64,3 +64,13 @@ BASE_CONST['p10t'] = {
         'PSM1KTx': 2,
     }
 }
+
+BASE_CONST['mcp'] = {
+    'MANUFACTURER' : 'Sennheiser',
+    'DEVICE_CLASS' : 'WirelessMic',
+    'CHANNEL_CLASS' : 'WirelessMCPMic',
+    'PROTOCOL': 'UDP',
+    'SHARED_PORT': True,
+    'DCID_MODEL' : {
+    }
+}
