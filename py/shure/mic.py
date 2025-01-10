@@ -7,7 +7,6 @@ from mic import BATTERY_TIMEOUT, PEAK_TIMEOUT, WirelessMic, WirelessMicBatterySt
 
 class ShureMicReportEnum(enum.Enum):
     PowerLock = enum.auto()
-    RFLevel = enum.auto()
     Runtime = enum.auto()
     TXQuality = enum.auto()
 
@@ -27,7 +26,6 @@ class WirelessShureMic(WirelessMic):
         self.report_map = {
             **self.report_map,
             ShureMicReportEnum.PowerLock: self.set_power_lock,
-            ShureMicReportEnum.RFLevel: self.set_rf_level,
             ShureMicReportEnum.Runtime: self.set_runtime,
             ShureMicReportEnum.TXQuality: self.set_tx_quality,
         }
@@ -37,7 +35,6 @@ class WirelessShureMic(WirelessMic):
             **super().ch_json(),
             'power_lock': self.power_lock,
             'quality': self.quality,
-            'rf_level': self.rf_level,
             'runtime': self.runtime,
             'status': self.tx_state(),
         }

@@ -21,6 +21,7 @@ class WirelessMicReportEnum(enum.Enum):
     Battery = enum.auto()
     Frequency = enum.auto()
     Name = enum.auto()
+    RFLevels = enum.auto()
     TXOffset = enum.auto()
 
 # https://stackoverflow.com/questions/17027878/algorithm-to-find-the-most-significant-bit
@@ -33,6 +34,7 @@ def MSB(audio_level):
 
 class WirelessMic(ChannelDevice):
 
+    ANTENNA_COUNT = 2
     BATTERY_SEGMENTS = 5
 
     def __init__(self, rx, cfg):
@@ -41,7 +43,7 @@ class WirelessMic(ChannelDevice):
         self.battery_status = WirelessMicBatteryStatus.Unknown
         self.prev_battery = 255
         self.audio_level = 0
-        self.rf_level = 0
+        self.rf_levels = [0] * self.ANTENNA_COUNT
         self.antenna = 'XX'
         self.peakstamp = time.time() - 60
         self.tx_offset = 255
@@ -52,6 +54,7 @@ class WirelessMic(ChannelDevice):
             WirelessMicReportEnum.Battery: self.set_battery,
             WirelessMicReportEnum.Frequency: self.set_frequency,
             WirelessMicReportEnum.Name: self.set_chan_name_raw,
+            WirelessMicReportEnum.RFLevels: self.set_rf_levels,
             WirelessMicReportEnum.TXOffset: self.set_tx_offset,
         }
 
@@ -69,6 +72,9 @@ class WirelessMic(ChannelDevice):
     def set_battery(self, level):
         pass
 
+    def set_rf_levels(self, antenna, rf_level):
+        pass
+
     def set_tx_offset(self, tx_offset):
         pass
 
@@ -80,6 +86,7 @@ class WirelessMic(ChannelDevice):
             'battery': self.battery,
             'battery_segments': self.BATTERY_SEGMENTS,
             'battery_status': self.battery_status.value,
+            'rf_levels': self.rf_levels,
             'tx_offset': self.tx_offset,
         }
 
@@ -92,7 +99,7 @@ class WirelessMic(ChannelDevice):
     def chart_json(self):
         return {
             'audio_level': self.audio_level,
-            'rf_level': self.rf_level,
+            'rf_levels': self.rf_levels,
             'slot': self.slot,
             'type': self.rx.type,
             'timestamp': time.time()
