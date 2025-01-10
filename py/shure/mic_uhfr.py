@@ -16,6 +16,20 @@ class WirelessUHFRMic(WirelessShureMic):
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 
+    def build_get_all_strings(self):
+        return [
+            f'* GET {self.channel} CHAN_NAME *',
+            f'* GET {self.channel} TX_BAT *',
+            f'* GET {self.channel} GROUP_CHAN *',
+        ]
+
+    def build_query_strings(self):
+        return [
+            f'* GET {self.channel} CHAN_NAME *',
+            f'* GET {self.channel} TX_BAT *',
+            f'* GET {self.channel} GROUP_CHAN *',
+        ]
+
     def monitoring_disable(self):
         return f'* METER {self.channel} ALL STOP *'
 

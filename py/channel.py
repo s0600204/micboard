@@ -22,6 +22,12 @@ class ChannelDevice:
         self.raw = defaultdict(dict)
         self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
 
+    def build_get_all_strings(self):
+        return []
+
+    def build_query_strings(self):
+        return []
+
     def monitoring_disable(self):
         return None
 

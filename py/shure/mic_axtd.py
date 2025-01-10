@@ -23,6 +23,12 @@ class WirelessAXTDMic(WirelessShureMic):
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 
+    def build_query_strings(self):
+        return [
+            f'< GET {self.channel} CHAN_NAME >',
+            f'< GET {self.channel} TX_BATT_BARS >',
+        ]
+
     def parse_sample(self, split):
         self.set_antenna(split[7])
         self.set_rf_levels(0, split[9])

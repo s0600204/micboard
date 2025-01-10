@@ -38,6 +38,11 @@ class WirelessShureMic(WirelessMic):
             'status': self.tx_state(),
         }
 
+    def build_get_all_strings(self):
+        return [
+            f'< GET {self.channel} ALL >',
+        ]
+
     def monitoring_disable(self):
         return f'< SET {self.channel} METER_RATE 0 >'
 

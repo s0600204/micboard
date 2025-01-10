@@ -24,7 +24,6 @@ class NetworkDevice:
         self.f = None
         self.socket_watchdog = int(time.perf_counter())
         self.raw = defaultdict(dict)
-        self.BASECONST = BASE_CONST[self.type]['base_const']
 
     def socket_connect(self):
         try:
@@ -100,18 +99,14 @@ class NetworkDevice:
 
     def get_all(self):
         ret = []
-        for channel in self.get_channels():
-            for s in self.BASECONST['getAll']:
-                ret.append(s.format(channel))
-
+        for channel in self.channels:
+            ret = ret + channel.build_get_all_strings()
         return ret
 
     def get_query_strings(self):
         ret = []
-        for channel in self.get_channels():
-            for s in self.BASECONST['query']:
-                ret.append(s.format(channel))
-
+        for channel in self.channels:
+            ret = ret + channel.build_query_strings()
         return ret
 
 

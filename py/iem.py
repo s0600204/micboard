@@ -84,6 +84,17 @@ class IEM(ChannelDevice):
         del data['raw']
         return data
 
+    def build_get_all_strings(self):
+        return [
+            f'< GET {self.slot} CHAN_NAME >\r\n',
+            f'< GET {self.slot} FREQUENCY >\r\n',
+        ]
+
+    def build_query_strings(self):
+        return [
+            f'< GET {self.slot} CHAN_NAME >\r\n',
+        ]
+
     def monitoring_disable(self):
         return f'< SET {self.slot} METER_RATE 0 >'
 
