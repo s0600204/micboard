@@ -16,6 +16,12 @@ class WirelessUHFRMic(WirelessShureMic):
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
 
+    def monitoring_disable(self):
+        return f'* METER {self.channel} ALL STOP *'
+
+    def monitoring_enable(self, interval):
+        return f'* METER {self.channel} ALL {int(interval / 30 * 1000):03d} *'
+
     def parse_sample(self, split):
         self.set_antenna(split[3])
         self.set_rf_levels(0, split[4])

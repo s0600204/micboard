@@ -22,6 +22,11 @@ class ChannelDevice:
         self.raw = defaultdict(dict)
         self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
 
+    def monitoring_disable(self):
+        return None
+
+    def monitoring_enable(self, interval):
+        return None
 
     def set_frequency(self, frequency):
         self.frequency = frequency[:3] + '.' + frequency[3:]

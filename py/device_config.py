@@ -18,7 +18,6 @@ BASE_CONST['uhfr'] = {
             '* GET {} TX_BAT *',
             '* GET {} GROUP_CHAN *'
         ],
-        'meter_stop' : '* METER {} ALL STOP *'
     },
     'DCID_MODEL' : {
         'UR4S' : 1,
@@ -38,7 +37,6 @@ BASE_CONST['qlxd'] = {
             '< GET {} CHAN_NAME >',
             '< GET {} BATT_BARS >'
         ],
-        'meter_stop' : '< SET {} METER_RATE 0 >'
     },
     'DCID_MODEL' : {
         'QLX-DSingle' : 1,
@@ -60,7 +58,6 @@ BASE_CONST['ulxd'] = {
             '< GET {} CHAN_NAME >',
             '< GET {} BATT_BARS >'
         ],
-        'meter_stop' : '< SET {} METER_RATE 0 >'
     },
     'DCID_MODEL' : {
         'ULX-DSingle': 1,
@@ -87,7 +84,6 @@ BASE_CONST['axtd'] = {
             '< GET {} CHAN_NAME >',
             '< GET {} TX_BATT_BARS >'
         ],
-        'meter_stop' : '< SET {} METER_RATE 0 >'
     },
     'DCID_MODEL' : {
         'AD4D': 2,
@@ -112,7 +108,6 @@ BASE_CONST['p10t'] = {
             '< GET {} FREQUENCY >\r\n'
         ],
         'query' : ['< GET {} CHAN_NAME >\r\n'],
-        'meter_stop' : '< SET {} METER_RATE 0 >'
     },
     'DCID_MODEL' : {
         'PSM1KTx': 2,

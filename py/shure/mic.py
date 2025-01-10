@@ -38,6 +38,12 @@ class WirelessShureMic(WirelessMic):
             'status': self.tx_state(),
         }
 
+    def monitoring_disable(self):
+        return f'< SET {self.channel} METER_RATE 0 >'
+
+    def monitoring_enable(self, interval):
+        return f'< SET {self.channel} METER_RATE {int(interval * 1000):05d} >'
+
     def process_audio_bitmap(self, bitmap):
         bitmap = int(bitmap)
         if bitmap >> 7:

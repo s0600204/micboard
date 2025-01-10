@@ -13,6 +13,7 @@ class NetworkDevice:
 
     PORT = None
     ENCODING = 'UTF-8'
+    METERING_INTERVAL = 0.1 # seconds
 
     def __init__(self, ip, type):
         self.ip = ip
@@ -37,7 +38,7 @@ class NetworkDevice:
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
 
             self.set_rx_com_status('CONNECTING')
-            self.enable_metering(.1)
+            self.enable_metering(self.METERING_INTERVAL)
 
             for string in self.get_all():
                 self.writeQueue.put(string)
@@ -115,16 +116,16 @@ class NetworkDevice:
 
 
     def enable_metering(self, interval):
-        if self.type in ['qlxd', 'ulxd', 'axtd', 'p10t']:
-            for i in self.get_channels():
-                self.writeQueue.put('< SET {} METER_RATE {:05d} >'.format(i, int(interval * 1000)))
-        elif self.type == 'uhfr':
-            for i in self.get_channels():
-                self.writeQueue.put('* METER {} ALL {:03d} *'.format(i, int(interval/30 * 1000)))
+        for channel in self.channels:
+            msg = channel.monitoring_enable(interval)
+            if msg:
+                self.writeQueue.put(msg)
 
     def disable_metering(self):
-        for i in self.get_channels():
-            self.writeQueue.put(self.BASECONST['meter_stop'].format(i))
+        for channel in self.channels:
+            msg = channel.monitoring_disable()
+            if msg:
+                self.writeQueue.put(msg)
 
     def net_json(self):
         ch_data = []
