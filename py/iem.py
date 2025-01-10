@@ -83,3 +83,9 @@ class IEM(ChannelDevice):
         data['timestamp'] = time.time()
         del data['raw']
         return data
+
+    def monitoring_disable(self):
+        return f'< SET {self.slot} METER_RATE 0 >'
+
+    def monitoring_enable(self, interval):
+        return f'< SET {self.slot} METER_RATE {int(interval * 1000):05d} >'
