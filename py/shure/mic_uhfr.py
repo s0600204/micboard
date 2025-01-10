@@ -13,6 +13,18 @@ class WirelessUHFRMic(WirelessShureMic):
         'TX_BAT'    : WirelessMicReportEnum.Battery,
     }
 
+    def build_get_all_strings(self):
+        return [
+            f'* GET {self.channel} CHAN_NAME *',
+            f'* GET {self.channel} TX_BAT *',
+        ]
+
+    def build_query_strings(self):
+        return [
+            f'* GET {self.channel} CHAN_NAME *',
+            f'* GET {self.channel} TX_BAT *',
+        ]
+
     def monitoring_disable(self):
         return f'* METER {self.channel} ALL STOP *'
 
