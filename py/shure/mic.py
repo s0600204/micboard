@@ -95,22 +95,10 @@ class WirelessShureMic(WirelessMic):
         # if not self.get_chan_name()[1]:
         #     return 'UNASSIGNED'
 
-        if (time.time() - self.timestamp) < BATTERY_TIMEOUT:
-            if 4 <= self.battery <= 5:
-                return 'GOOD'
-            elif self.battery == 255 and 4 <= self.prev_battery <= 5:
-                return 'PREV_GOOD'
-            elif self.battery == 3:
-                return 'REPLACE'
-            elif self.battery == 255 and self.prev_battery == 3:
-                return 'PREV_REPLACE'
-                # return 'UNASSIGNED'
-            elif 0 <= self.battery <= 2:
-                return 'CRITICAL'
-            elif self.battery == 255 and 0 <= self.prev_battery <= 2:
-                return 'PREV_CRITICAL'
+        if (self.battery == 255):
+            if (time.time() - self.timestamp) > BATTERY_TIMEOUT:
+                return 'TX_COM_ERROR'
 
-        return 'TX_COM_ERROR'
+            return 'TX_OFF'
 
-
-
+        return 'OK'
