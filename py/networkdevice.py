@@ -13,6 +13,7 @@ class NetworkDevice:
     ENCODING = 'UTF-8'
     METERING_INTERVAL = 0.1 # seconds
     NETWORK_PROTOCOL = NetworkProtocol.TCP
+    NETWORK_SHARED_PORT = False
     DEVICE_CLASS_MAP = {}
 
     def __init__(self, ip, type):
@@ -34,6 +35,9 @@ class NetworkDevice:
 
             elif self.NETWORK_PROTOCOL == NetworkProtocol.UDP:
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
+                if self.NETWORK_SHARED_PORT:
+                    self.f.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+                    self.f.bind(('', self.PORT))
 
             self.set_rx_com_status('CONNECTING')
             self.enable_metering(self.METERING_INTERVAL)
