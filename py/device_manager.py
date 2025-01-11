@@ -8,6 +8,7 @@ import logging
 
 from channel import chart_update_list, data_update_list
 from shure.networkdevice import ShureNetworkDevice
+from util import WIRELESS_QUERY_QUEUE_INTERVAL
 
 
 NetworkDevices = []
@@ -56,7 +57,7 @@ def WirelessQueryQueue():
             strings = rx.get_query_strings()
             for string in strings:
                 rx.writeQueue.put(string)
-        time.sleep(10)
+        time.sleep(WIRELESS_QUERY_QUEUE_INTERVAL)
 
 def ProcessRXMessageQueue():
     while True:
