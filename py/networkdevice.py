@@ -35,6 +35,9 @@ class NetworkDevice:
 
             elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
+                if BASE_CONST[self.type]['SHARED_PORT']:
+                    self.f.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+                    self.f.bind(('', self.PORT))
 
             self.set_rx_com_status('CONNECTING')
             self.enable_metering(self.METERING_INTERVAL)

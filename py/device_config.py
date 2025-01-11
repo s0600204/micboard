@@ -6,6 +6,7 @@ BASE_CONST['uhfr'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'CHANNEL_CLASS' : 'WirelessUHFRMic',
     'PROTOCOL': 'UDP',
+    'SHARED_PORT': False,
     'DCID_MODEL' : {
         'UR4S' : 1,
         'UR4D' : 2,

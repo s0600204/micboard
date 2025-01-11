@@ -3,6 +3,7 @@ import select
 import queue
 import atexit
 import sys
+import socket
 import logging
 
 
@@ -78,7 +79,8 @@ def SocketService():
 
         for rx in read_socks:
             try:
-                data = rx.f.recv(1024)
+                data, address = rx.f.recvfrom(1024)
+                rx = get_network_device_by_ip(address[0])
             except:
                 rx.socket_disconnect()
                 break

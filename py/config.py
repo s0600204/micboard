@@ -175,7 +175,7 @@ def reconfig(slots):
 
     config_tree.clear()
     for device in device_manager.NetworkDevices:
-        # device.socket_disconnect()
+        device.socket_disconnect()
         device.disable_metering()
         del device.channels[:]
 
