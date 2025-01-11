@@ -152,8 +152,12 @@ def SocketService():
 
         for rx in read_socks:
             try:
-                data, address = rx.f.recvfrom(1024)
-                rx = get_network_device_by_ip(address[0])
+                if isinstance(rx.f, socket.socket):
+                    data = rx.f.recv(1024)
+                else:
+                    data, rx = rx.f.recvfrom(1024)
+                    if not rx:
+                        continue
             except:
                 rx.socket_disconnect()
                 break

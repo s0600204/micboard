@@ -4,6 +4,7 @@ import socket
 from collections import defaultdict
 import logging
 
+from udp_shared_sockets import SharedUDPSocket
 from util import NetworkProtocol
 
 
@@ -34,10 +35,11 @@ class NetworkDevice:
                 self.f.connect((self.ip, self.PORT))
 
             elif self.NETWORK_PROTOCOL == NetworkProtocol.UDP:
-                self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
                 if self.NETWORK_SHARED_PORT:
-                    self.f.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-                    self.f.bind(('', self.PORT))
+                    self.f = SharedUDPSocket.socket(self.PORT)
+                    self.f.add_client(self)
+                else:
+                    self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
 
             self.set_rx_com_status('CONNECTING')
             self.enable_metering(self.METERING_INTERVAL)
@@ -51,6 +53,8 @@ class NetworkDevice:
 
 
     def socket_disconnect(self):
+        if self.NETWORK_PROTOCOL == NetworkProtocol.UDP and self.NETWORK_SHARED_PORT:
+            self.f.remove_client(self)
         self.f.close()
         self.set_rx_com_status('DISCONNECTED')
         self.socket_watchdog = int(time.perf_counter())
