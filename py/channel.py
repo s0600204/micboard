@@ -22,7 +22,7 @@ class ChannelDevice:
         self.cfg = cfg
         self.chan_name_raw = 'SLOT {}'.format(cfg['slot'])
         self.channel = cfg['channel']
-        self.timestamp = time.time() - 60
+        self.timestamp = 0
         self.frequency = '000000'
         self.slot = cfg['slot']
         self.raw = defaultdict(dict)
