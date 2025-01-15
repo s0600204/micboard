@@ -101,25 +101,6 @@ class ChannelDevice:
             'type': self.rx.type,
         }
 
-    def parse_raw_ch(self, data):
-        split = data.split()
-        self.raw[split[2]] = ' '.join(split[3:])
-
-        try:
-            if split[0] == 'SAMPLE' and split[2] == 'ALL':
-                self.parse_sample(split)
-                chart_update_list.append(self.chart_json())
-
-            if split[0] in ['REP', 'REPLY', 'REPORT']:
-                self.parse_report(split[2], split[3:])
-
-                if self not in data_update_list:
-                    data_update_list.append(self)
-
-        except Exception as e:
-            print("Index Error(TX): {}".format(data.split()))
-            print(e)
-
     def parse_report(self, key, values):
         if key not in self.REPORT_MAPPING or self.REPORT_MAPPING[key] not in self.report_map:
             return

@@ -49,6 +49,9 @@ class WirelessShureMic(WirelessMic):
     def monitoring_enable(self, interval):
         return f'< SET {self.channel} METER_RATE {int(interval * 1000):05d} >'
 
+    def parse_sample(self, split):
+        pass
+
     def process_audio_bitmap(self, bitmap):
         bitmap = int(bitmap)
         if bitmap >> 7:

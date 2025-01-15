@@ -1,4 +1,4 @@
-
+from channel import chart_update_list, data_update_list
 from networkdevice import NetworkDevice
 
 
@@ -15,7 +15,20 @@ class ShureNetworkDevice(NetworkDevice):
             try:
                 if split[0] in ['REP', 'REPORT', 'SAMPLE'] and split[1] in ['1', '2', '3', '4']:
                     ch = self.get_device_by_channel(int(split[1]))
-                    ch.parse_raw_ch(data)
+                    try:
+                        if split[0] == 'SAMPLE' and split[2] == 'ALL':
+                            ch.parse_sample(split)
+                            chart_update_list.append(ch.chart_json())
+
+                        if split[0] in ['REP', 'REPLY', 'REPORT']:
+                            ch.parse_report(split[2], split[3:])
+
+                            if ch not in data_update_list:
+                                data_update_list.append(ch)
+
+                    except Exception as e:
+                        print("Index Error(TX): {}".format(data.split()))
+                        print(e)
 
                 elif split[0] in ['REP', 'REPORT']:
                     self.raw[split[1]] = ' '.join(split[2:])

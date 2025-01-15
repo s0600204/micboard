@@ -105,6 +105,3 @@ class WirelessMic(ChannelDevice):
             'type': self.rx.type,
             'timestamp': time.time()
         }
-
-    def parse_sample(self, split):
-        pass
