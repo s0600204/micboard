@@ -1,0 +1,10 @@
+py usr/share/micboard
+static usr/share/micboard
+
+dcid.json usr/share/micboard
+demo.html usr/share/micboard
+democonfig.json usr/share/micboard
+micboard.service usr/share/micboard
+package.json usr/share/micboard
+
+debian/dist/micboard usr/bin

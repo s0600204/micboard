@@ -1,0 +1,43 @@
+micboard (0.9.0~pre.1~s06+senn-1) UNRELEASED; urgency=medium
+
+  * Prevent duplicate log entries on config change
+  * Correct executable file
+
+ -- s0600204 <dev@s0600204>  Mon, 27 Jan 2025 23:07:00 +0000
+
+micboard (0.9.0~pre.0+s0600204+sennheiser-2) UNRELEASED; urgency=medium
+
+  * Add executable file to /usr/bin
+  * Amend service file
+  * Add missing runtime dependency
+
+ -- s0600204 <dev@s0600204>  Fri, 24 Jan 2025 20:22:00 +0000
+ 
+micboard (0.9.0~pre.0+s0600204+sennheiser-1) UNRELEASED; urgency=medium
+
+  * Add sennheiser support
+
+ -- s0600204 <dev@s0600204>  Fri, 24 Jan 2025 19:55:00 +0000
+ 
+ 
+micboard (0.9.0~pre.0+s0600204-1) UNRELEASED; urgency=medium
+
+  * Fix of setting Extended Names
+  * Refactor py and js code to make less Shure-specific
+
+ -- s0600204 <dev@s0600204>  Fri, 24 Jan 2025 19:55:00 +0000
+
+
+micboard (0.8.7+s0600204-2) UNRELEASED; urgency=medium
+
+  * Include missing file needed for first run
+
+ -- s0600204 <dev@s0600204>  Thu, 23 Jan 2025 23:46:00 +0000
+
+
+micboard (0.8.7+s0600204-1) UNRELEASED; urgency=medium
+
+  * Initial packaging.
+  * Rework dependencies
+
+ -- s0600204 <dev@s0600204>  Tue, 21 Jan 2025 22:00:00 +0000
