@@ -3,7 +3,6 @@
 import { Collapse } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
-import 'whatwg-fetch';
 
 import { autoRandom, seedTransmitters } from './demodata.js';
 import { renderGroup, renderDisplayList, updateSlot } from './channelview.js';
