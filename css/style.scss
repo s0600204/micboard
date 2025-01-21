@@ -1,4 +1,17 @@
-/* @import '/node_modules/@ibm/plex/css/ibm-plex.css'; */
+@use "@fontsource/ibm-plex-mono/scss/mixins" as PlexMono;
+@use "@fontsource/ibm-plex-sans/scss/mixins" as PlexSans;
+
+@include PlexMono.faces(
+  $subsets: all,
+  $weights: 100,
+  $styles: all
+);
+@include PlexSans.faces(
+  $subsets: all,
+  $weights: (300, 400, 600),
+  $styles: all
+);
+
 
 html,body {
   background-color: var(--color-background);
