@@ -1,0 +1,15 @@
+diff --git a/webpack.config.js b/webpack.config.js
+index ec7ea23..4a2315e 100644
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -50,4 +50,10 @@ module.exports = {
+       },
+     ],
+   },
++  resolve: {
++    modules: ['/usr/share/nodejs', '.'],
++  },
++  resolveLoader: {
++    modules: ['/usr/share/nodejs'],
++  },
+ };

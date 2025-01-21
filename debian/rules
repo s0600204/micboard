@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+# Output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_test:
+	# No test; thanks.
+
+override_dh_auto_install:
+	# We're installing ourselves, thanks anyway.

@@ -1,0 +1,20 @@
+diff --git a/micboard.service b/micboard.service
+index b5b824a..836c5be 100644
+--- a/micboard.service
++++ b/micboard.service
+@@ -3,13 +3,12 @@ Description=Micboard Service
+ After=network.target
+ 
+ [Service]
+-Environment=MICBOARD_PORT=80
++Environment=MICBOARD_PORT=8058
+ ExecStart=/usr/bin/python3 -u py/micboard.py
+-WorkingDirectory=/home/micboard/micboard
++WorkingDirectory=/usr/share/micboard
+ StandardOutput=inherit
+ StandardError=inherit
+ Restart=always
+-User=micboard
+ AmbientCapabilities=CAP_NET_BIND_SERVICE
+ 
+ [Install]

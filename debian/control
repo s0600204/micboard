@@ -1,0 +1,28 @@
+Source: micboard
+Section: sound
+Priority: optional
+Maintainer: s0600204 <dev@s0600204>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-nodejs,
+ nodejs,
+ npm
+Standards-Version: 4.6.2
+Homepage: https://github.com/karlcswanson/micboard.git
+
+Package: micboard
+Architecture: all
+Depends:
+ ${misc:Depends},
+ python3-ifaddr,
+ python3-tornado
+Description: Visual monitoring tool for network enabled Shure and Sennheiser RF devices
+
+Package: micboard-docs
+Architecture: all
+Depends:
+ ${misc:Depends}
+Description: Visual monitoring tool for network enabled Shure and Sennheiser RF devices
+ .
+ These are documentation files, separated out to keep the main package small.
