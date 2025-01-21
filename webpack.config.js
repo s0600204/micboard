@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   // entry: ['./js/script.js','./js/gif.js','./js/chart-smoothie.js','./js/demodata.js'],
   entry: {
-    app: ['whatwg-fetch', './js/app.js'],
+    app: ['./js/app.js'],
     venue: ['./js/venues.js'],
     web: ['./js/web.js'],
   },
