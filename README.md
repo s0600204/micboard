@@ -4,7 +4,7 @@
 
 <h1 align="center">Micboard</h1>
 
-A visual monitoring tool for network enabled Shure devices.  Micboard simplifies microphone monitoring and storage for artists, engineers, and volunteers.  View battery, audio, and RF levels from any device on the network.
+A visual monitoring tool for network enabled Shure and Sennheiser devices.  Micboard simplifies microphone monitoring and storage for artists, engineers, and volunteers.  View battery, audio, and RF levels from any device on the network.
 
 ![Micboard Storage Photo](docs/img/wccc.jpg)
 
@@ -25,12 +25,23 @@ A visual monitoring tool for network enabled Shure devices.  Micboard simplifies
 ![mic storage](docs/img/tv_imagebg.png)
 
 ## Compatible Devices
-Micboard supports the following devices -
+Micboard supports the following Shure devices -
+
 * Shure UHF-R
 * Shure QLX-D<sup>[1](#qlxd)</sup>
 * Shure ULX-D
 * Shure Axient Digital
 * Shure PSM 1000
+
+And the following Sennheiser devices -
+
+* EM 300 G3
+* EM 500 G3
+* EM 300-500 G4
+* EM 2000
+* EM 2050
+
+(Sennheiser devices must be running firmware `1.7.0` or later.)
 
 Micboard uses IP addresses to connect to RF devices.  RF devices can be addressed through static or reserved IPs.  They just need to be consistent.
 
