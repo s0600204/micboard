@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 
@@ -9,7 +10,9 @@ import discover
 
 
 def main():
-    config.config()
+    version = config.config()
+    config.logging_init()
+    logging.info(f'Starting Micboard {version}')
 
     time.sleep(.1)
     rxquery_t = threading.Thread(target=shure.WirelessQueryQueue)

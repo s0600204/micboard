@@ -144,12 +144,9 @@ def parse_args():
 def config():
     global args
     args = parse_args()
-    logging_init()
     read_json_config(config_file())
     uuid_init()
-
-
-    logging.info('Starting Micboard {}'.format(config_tree['micboard_version']))
+    return config_tree['micboard_version']
 
 
 def config_mix(slots):
