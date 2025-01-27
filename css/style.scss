@@ -1,4 +1,17 @@
-/* @import '/node_modules/@ibm/plex/css/ibm-plex.css'; */
+@use "@fontsource/ibm-plex-mono/scss/mixins" as PlexMono;
+@use "@fontsource/ibm-plex-sans/scss/mixins" as PlexSans;
+
+@include PlexMono.faces(
+  $subsets: all,
+  $weights: 100,
+  $styles: all
+);
+@include PlexSans.faces(
+  $subsets: all,
+  $weights: (300, 400, 600),
+  $styles: all
+);
+
 
 html,body {
   background-color: var(--color-background);
@@ -90,17 +103,27 @@ html,body {
   box-sizing:border-box;
 }
 
-.batt_led_off{
+.batt_led_hidden {
+  display: none;
+}
+
+.batt_led_off, .batt_led_off_danger {
   background-color: var(--color-black);
+}
+
+.batt_led_off_danger {
+  border-color: var(--color-red);
 }
 
 .batt_led_danger{
   background-color: var(--color-red);
+  border-color: var(--color-red-dark);
 }
 
 .batt_led_warning {
   background-color: var(--color-yellow);
 }
+
 .batt_led_good{
   background-color: var(--color-green);
 }
@@ -591,7 +614,7 @@ canvas.slotgraph {
   background: var(--color-black);
 }
 
-.TX_COM_ERROR {
+.TX_COM_ERROR, .OK {
   background: var(--color-black);
 }
 

@@ -5,14 +5,16 @@ from collections import defaultdict
 import logging
 
 from device_config import BASE_CONST
-from iem import IEM
-from mic import WirelessMic
+import iem
+import mic
 
 
-PORT = 2202
+class NetworkDevice:
 
+    PORT = None
+    ENCODING = 'UTF-8'
+    METERING_INTERVAL = 0.1 # seconds
 
-class ShureNetworkDevice:
     def __init__(self, ip, type):
         self.ip = ip
         self.type = type
@@ -22,21 +24,20 @@ class ShureNetworkDevice:
         self.f = None
         self.socket_watchdog = int(time.perf_counter())
         self.raw = defaultdict(dict)
-        self.BASECONST = BASE_CONST[self.type]['base_const']
 
     def socket_connect(self):
         try:
             if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #TCP
                 self.f.settimeout(.2)
-                self.f.connect((self.ip, PORT))
+                self.f.connect((self.ip, self.PORT))
 
 
             elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
 
             self.set_rx_com_status('CONNECTING')
-            self.enable_metering(.1)
+            self.enable_metering(self.METERING_INTERVAL)
 
             for string in self.get_all():
                 self.writeQueue.put(string)
@@ -51,6 +52,12 @@ class ShureNetworkDevice:
         self.set_rx_com_status('DISCONNECTED')
         self.socket_watchdog = int(time.perf_counter())
 
+    def socket_send(self, message):
+        if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
+            self.f.sendall(bytearray(message, self.ENCODING))
+
+        elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
+            self.f.sendto(bytearray(message, self.ENCODING), (self.ip, self.PORT))
 
     def fileno(self):
         return self.f.fileno()
@@ -64,29 +71,26 @@ class ShureNetworkDevice:
 
     def add_channel_device(self, cfg):
         if BASE_CONST[self.type]['DEVICE_CLASS'] == 'WirelessMic':
-            self.channels.append(WirelessMic(self, cfg))
+            py_class = getattr(mic, BASE_CONST[self.type]['CHANNEL_CLASS'])
+
         elif BASE_CONST[self.type]['DEVICE_CLASS'] == 'IEM':
-            self.channels.append(IEM(self, cfg))
+            py_class = getattr(iem, BASE_CONST[self.type]['CHANNEL_CLASS'])
+
+        if py_class:
+            self.channels.append(py_class(self, cfg))
 
     def get_device_by_channel(self, channel):
         return next((x for x in self.channels if x.channel == int(channel)), None)
 
+    def split_raw_rx(self, data):
+        """Split a raw stream of bytes received into the various message stanzas it contains.
+        Dealing with what each line means is begun in the `parse_raw_rx()` method.
+        """
+        return data.split("\n")
+
     def parse_raw_rx(self, data):
-        data = data.strip('< >').strip('* ')
-        data = data.replace('{', '').replace('}', '')
-        data = data.rstrip()
-        split = data.split()
-        if data:
-            try:
-                if split[0] in ['REP', 'REPORT', 'SAMPLE'] and split[1] in ['1', '2', '3', '4']:
-                    ch = self.get_device_by_channel(int(split[1]))
-                    ch.parse_raw_ch(data)
-
-                elif split[0] in ['REP', 'REPORT']:
-                    self.raw[split[1]] = ' '.join(split[2:])
-            except:
-                logging.warning("Index Error(RX): %s", data)
-
+        """Deal with what each line means."""
+        pass
 
     def get_channels(self):
         channels = []
@@ -96,32 +100,28 @@ class ShureNetworkDevice:
 
     def get_all(self):
         ret = []
-        for channel in self.get_channels():
-            for s in self.BASECONST['getAll']:
-                ret.append(s.format(channel))
-
+        for channel in self.channels:
+            ret = ret + channel.build_get_all_strings()
         return ret
 
     def get_query_strings(self):
         ret = []
-        for channel in self.get_channels():
-            for s in self.BASECONST['query']:
-                ret.append(s.format(channel))
-
+        for channel in self.channels:
+            ret = ret + channel.build_query_strings()
         return ret
 
 
     def enable_metering(self, interval):
-        if self.type in ['qlxd', 'ulxd', 'axtd', 'p10t']:
-            for i in self.get_channels():
-                self.writeQueue.put('< SET {} METER_RATE {:05d} >'.format(i, int(interval * 1000)))
-        elif self.type == 'uhfr':
-            for i in self.get_channels():
-                self.writeQueue.put('* METER {} ALL {:03d} *'.format(i, int(interval/30 * 1000)))
+        for channel in self.channels:
+            msg = channel.monitoring_enable(interval)
+            if msg:
+                self.writeQueue.put(msg)
 
     def disable_metering(self):
-        for i in self.get_channels():
-            self.writeQueue.put(self.BASECONST['meter_stop'].format(i))
+        for channel in self.channels:
+            msg = channel.monitoring_disable()
+            if msg:
+                self.writeQueue.put(msg)
 
     def net_json(self):
         ch_data = []

@@ -7,7 +7,8 @@ import uuid
 import time
 from shutil import copyfile
 
-import shure
+import device_config
+import device_manager
 import offline
 import tornado_server
 
@@ -144,12 +145,9 @@ def parse_args():
 def config():
     global args
     args = parse_args()
-    logging_init()
     read_json_config(config_file())
     uuid_init()
-
-
-    logging.info('Starting Micboard {}'.format(config_tree['micboard_version']))
+    return config_tree['micboard_version']
 
 
 def config_mix(slots):
@@ -176,18 +174,18 @@ def reconfig(slots):
     save_current_config()
 
     config_tree.clear()
-    for device in shure.NetworkDevices:
+    for device in device_manager.NetworkDevices:
         # device.socket_disconnect()
         device.disable_metering()
         del device.channels[:]
 
-    del shure.NetworkDevices[:]
+    del device_manager.NetworkDevices[:]
     del offline.OfflineDevices[:]
 
     time.sleep(2)
 
     config()
-    for rx in shure.NetworkDevices:
+    for rx in device_manager.NetworkDevices:
         rx.socket_connect()
 
 def get_version_number():
@@ -203,8 +201,9 @@ def read_json_config(file):
         config_tree = json.load(config_file)
 
         for chan in config_tree['slots']:
-            if chan['type'] in ['uhfr', 'qlxd', 'ulxd', 'axtd', 'p10t']:
-                netDev = shure.check_add_network_device(chan['ip'], chan['type'])
+            if chan['type'] in list(device_config.BASE_CONST.keys()):
+                manufacturer = device_config.BASE_CONST[chan['type']]['MANUFACTURER']
+                netDev = device_manager.check_add_network_device(manufacturer, chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
 
             elif chan['type'] == 'offline':
@@ -265,7 +264,7 @@ def update_slot(data):
 
     if save_name:
         try:
-            slot_cfg['chan_name_raw'] = shure.get_network_device_by_slot(data['slot']).chan_name_raw
+            slot_cfg['chan_name_raw'] = device_manager.get_network_device_by_slot(data['slot']).chan_name_raw
         except:
             pass
 

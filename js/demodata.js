@@ -9,37 +9,52 @@ let timers = {};
 const batterySample = {
   0: {
     battery: 255,
-    status: ['CRITICAL', 'UNASSIGNED', 'RX_COM_ERROR', 'TX_COM_ERROR'],
+    battery_status: 'off',
+    battery_segments: 5,
+    status: ['UNASSIGNED', 'RX_COM_ERROR', 'TX_COM_ERROR'],
     runtime_min_max: [0, 0],
   },
   1: {
     battery: 1,
-    status: ['CRITICAL', 'PREV_CRITICAL'],
+    battery_status: 'critical',
+    battery_segments: 5,
+    status: ['OK', 'OK', 'TX_OFF'],
     runtime_min_max: [0, 1],
   },
   2: {
     battery: 2,
-    status: ['CRITICAL', 'PREV_CRITICAL'],
+    battery_status: 'critical',
+    battery_segments: 5,
+    status: ['OK', 'OK', 'TX_OFF'],
     runtime_min_max: [1, 2],
   },
   3: {
     battery: 3,
-    status: ['REPLACE', 'PREV_REPLACE'],
+    battery_status: 'replace',
+    battery_segments: 5,
+    status: ['OK', 'OK', 'TX_OFF'],
     runtime_min_max: [3, 4],
   },
   4: {
     battery: 4,
-    status: ['GOOD', 'GOOD', 'PREV_GOOD', 'UNASSIGNED'],
+    battery_status: 'good',
+    battery_segments: 5,
+    status: ['OK', 'OK', 'TX_OFF', 'UNASSIGNED'],
     runtime_min_max: [5, 6],
   },
   5: {
     battery: 5,
-    status: ['GOOD', 'GOOD', 'PREV_GOOD'],
+    battery_status: 'good',
+    battery_segments: 5,
+    status: ['OK', 'OK', 'TX_OFF'],
     runtime_min_max: [7, 9],
   },
 };
 
-const rfSample = ['AX', 'XB', 'XX', 'BRXX', 'XRXB', 'XXBR'];
+const rfSample = {
+  2: ['AX', 'XB', 'XX'],
+  4: ['BRXX', 'XRXB', 'XXBR', 'BXXR'],
+}
 
 
 const name_sample = [
@@ -101,8 +116,8 @@ function uniqueRandomNameGenerator(slot) {
   // return output;
 }
 
-function randomRfSampleGenerator() {
-  return rfSample[getRandomInt(0, 5)];
+function randomRfSampleGenerator(antenna_count) {
+  return rfSample[antenna_count][getRandomInt(0, rfSample[antenna_count].length - 1)];
 }
 
 function randomAudioGenerator() {
@@ -149,6 +164,8 @@ function randomBatteryGenerator() {
 
   const res = {
     battery: battery.battery,
+    battery_segments: battery.battery_segments,
+    battery_status: battery.battery_status,
     status: battery.status[status_index],
     runtime: randomRuntimeGenerator(battery.runtime_min_max),
   };
@@ -157,20 +174,26 @@ function randomBatteryGenerator() {
 
 function randomDataGenerator() {
   const battery = randomBatteryGenerator();
+  const antenna_count = [2, 4][getRandomInt(0, 1)];
 
   const res = {
     name: randomNameGenerator(),
-    antenna: randomRfSampleGenerator(),
+    antenna: randomRfSampleGenerator(antenna_count),
     audio_level: randomAudioGenerator(),
-    rf_level: randomRfGenerator(),
+    rf_levels: [],
     tx_offset: randomTXOffsetGenerator(),
     frequency: randomFrequencyGenerator(),
     battery: battery.battery,
+    battery_status: battery.battery_status,
+    battery_segments: battery.battery_segments,
     status: battery.status,
     ip: randomIPGenerator(),
     channel: getRandomInt(1, 4),
     type: randomTypeGenerator(),
   };
+  for (let idx = 0; idx < antenna_count; ++idx) {
+    res.rf_levels.push(randomRfGenerator());
+  }
   return res;
 }
 
@@ -229,7 +252,7 @@ function meteteredRandomDataGenerator(update) {
   switch (update) {
     case 'name': data.name = uniqueRandomNameGenerator(slot);
       break;
-    case 'antenna': data.antenna = randomRfSampleGenerator();
+    case 'antenna': data.antenna = randomRfSampleGenerator(data.rf_levels.length);
       break;
     case 'tx_offset': data.tx_offset = randomTXOffsetGenerator();
       break;
@@ -241,6 +264,8 @@ function meteteredRandomDataGenerator(update) {
     case 'status': data.battery = battery.battery;
       data.status = battery.status;
       data.runtime = battery.runtime;
+      data.battery_segments = battery.battery_segments;
+      data.battery_status = battery.battery_status;
       break;
     default:
       break;
@@ -254,7 +279,8 @@ function randomCharts() {
     if (n !== 0) {
       const data = JSON.parse(JSON.stringify(micboard.transmitters[n]));
       data.audio_level = randomAudioGenerator();
-      data.rf_level = randomRfGenerator();
+      for (let idx = 0; idx < data.rf_levels.length; ++idx)
+        data.rf_levels[idx] = randomRfGenerator();
       data.timestamp = unixtimestamp();
       updateChart(data);
     }

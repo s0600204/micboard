@@ -3,7 +3,6 @@
 import { Collapse } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
-import 'whatwg-fetch';
 
 import { autoRandom, seedTransmitters } from './demodata.js';
 import { renderGroup, renderDisplayList, updateSlot } from './channelview.js';
@@ -17,7 +16,6 @@ import { initConfigEditor } from './config.js';
 
 import '../css/colors.scss';
 import '../css/style.scss';
-import '../node_modules/@ibm/plex/scss/ibm-plex.scss';
 
 
 export const dataURL = 'data.json';

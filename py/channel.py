@@ -1,3 +1,4 @@
+import enum
 import time
 import re
 from collections import defaultdict
@@ -10,25 +11,44 @@ chart_update_list = []
 data_update_list = []
 
 
+class ChannelDeviceReportEnum(enum.Enum):
+    Frequency = enum.auto()
+    Name = enum.auto()
+
+
 class ChannelDevice:
     def __init__(self, rx, cfg):
         self.rx = rx
         self.cfg = cfg
         self.chan_name_raw = 'SLOT {}'.format(cfg['slot'])
         self.channel = cfg['channel']
-        self.timestamp = time.time() - 60
+        self.timestamp = 0
         self.frequency = '000000'
         self.slot = cfg['slot']
         self.raw = defaultdict(dict)
-        self.CHCONST = BASE_CONST[self.rx.type]['ch_const']
 
+        self.report_map = {
+            ChannelDeviceReportEnum.Frequency: self.set_frequency,
+            ChannelDeviceReportEnum.Name: self.set_chan_name_raw,
+        }
+
+    def build_get_all_strings(self):
+        return []
+
+    def build_query_strings(self):
+        return []
+
+    def monitoring_disable(self):
+        return None
+
+    def monitoring_enable(self, interval):
+        return None
 
     def set_frequency(self, frequency):
-        if self.rx.type == 'axtd':
-            frequency = frequency.lstrip('0')
         self.frequency = frequency[:3] + '.' + frequency[3:]
 
-    def set_chan_name_raw(self, chan_name):
+    def set_chan_name_raw(self, *chan_name):
+        chan_name = ' '.join(chan_name)
         chan_name = chan_name.replace('_', ' ')
         self.chan_name_raw = chan_name
 
@@ -68,21 +88,20 @@ class ChannelDevice:
 
         return (chan_id, chan_name)
 
-    def parse_raw_ch(self, data):
-        split = data.split()
-        self.raw[split[2]] = ' '.join(split[3:])
+    def ch_json(self):
+        name = self.get_chan_name()
+        return {
+            'channel': self.channel,
+            'frequency': self.frequency,
+            'id': name[0],
+            'name': name[1],
+            'name_raw': self.chan_name_raw,
+            'raw': self.raw,
+            'slot': self.slot,
+            'type': self.rx.type,
+        }
 
-        try:
-            if split[0] == 'SAMPLE' and split[2] == 'ALL':
-                self.parse_sample(split)
-                chart_update_list.append(self.chart_json())
-
-            if split[0] in ['REP', 'REPLY', 'REPORT']:
-                self.parse_report(split)
-
-                if self not in data_update_list:
-                    data_update_list.append(self)
-
-        except Exception as e:
-            print("Index Error(TX): {}".format(data.split()))
-            print(e)
+    def parse_report(self, key, values):
+        if key not in self.REPORT_MAPPING or self.REPORT_MAPPING[key] not in self.report_map:
+            return
+        self.report_map[self.REPORT_MAPPING[key]](*values)
