@@ -5,7 +5,7 @@ import { Sortable, Plugins } from '@shopify/draggable';
 import { micboard, updateHash } from './app.js';
 import { postJSON } from './data.js';
 
-const NET_DEVICE_TYPES = ['axtd', 'ulxd', 'qlxd', 'uhfr', 'p10t'];
+const NET_DEVICE_TYPES = ['axtd', 'ulxd', 'qlxd', 'uhfr', 'slxd', 'p10t'];
 
 function updateEditEntry(slotSelector, data) {
   if (data.ip) {

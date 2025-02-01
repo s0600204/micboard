@@ -2,6 +2,7 @@ import socket
 import struct
 import json
 import time
+import logging
 
 import os
 import platform
@@ -45,7 +46,11 @@ def discover():
 
 def process_discovery_packet(ip, data):
     dcid = dcid_find(data)
-    device = dcid_get(dcid)
+    try:
+        device = dcid_get(dcid)
+    except TypeError:
+       logging.debug("Found unrecognised DCID: {}".format(dcid))
+       return
     rx_type, channels = dcid_model_lookup(device['model'])
     if __name__ == '__main__':
         print('RX: {} at: {} DCID: {} BAND: {} CHANNELS: {}'.format(rx_type, ip, dcid, device['band'], channels))

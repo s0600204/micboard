@@ -63,6 +63,34 @@ BASE_CONST['qlxd'] = {
 
 }
 
+BASE_CONST['slxd'] = {
+    'DEVICE_CLASS' : 'WirelessMic',
+    'PROTOCOL' : 'TCP',
+    'ch_const' : {
+        'battery': 'BATT_BARS',
+        'quality': 'NOT_SUPPORTED',
+        'frequency': 'FREQUENCY',
+        'audio_level': 'AUDIO_LEVEL_RMS',
+        'rf_level': 'RSSI',
+        'name': 'CHAN_NAME',
+        'antenna': 'NOT_SUPPORTED',
+        'tx_offset' : 'NOT_SUPPORTED',
+        'power_lock': 'LOCK_STATUS',
+        'runtime' : 'TX_BATT_MINS',
+        },
+    'base_const' : {
+        'getAll' : ['< GET {} ALL >'],
+        'query' : [
+            '< GET {} CHAN_NAME >',
+            '< GET {} BATT_BARS >'
+        ],
+        'meter_stop' : '< SET {} METER_RATE 0 >'
+    },
+    'DCID_MODEL' : {
+    }
+
+}
+
 BASE_CONST['ulxd'] = {
     'DEVICE_CLASS' : 'WirelessMic',
     'PROTOCOL': 'TCP',
