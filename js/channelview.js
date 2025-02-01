@@ -52,6 +52,14 @@ function updateTXOffset(slotSelector, data) {
   }
 }
 
+function updateSquelch(slotSelector, data) {
+  if (data.squelch !== null) {
+    slotSelector.querySelector('p.squelch').innerHTML = data.squelch;
+  } else {
+    slotSelector.querySelector('p.squelch').innerHTML = '';
+  }
+}
+
 
 function updateRuntime(slotSelector, data) {
   slotSelector.querySelector('p.runtime').innerHTML = data.runtime;
@@ -250,6 +258,9 @@ function updateSelector(slotSelector, data) {
   updateCheck(data, 'frequency', () => {
     updateFrequency(slotSelector, data);
   });
+  updateCheck(data, 'squelch', () => {
+    updateSquelch(slotSelector, data);
+  });
   updateCheck(data, 'power_lock', () => {
     updatePowerlock(slotSelector, data);
   });
@@ -280,6 +291,9 @@ export function updateViewOnly(slotSelector, data) {
   }
   if ('frequency' in data) {
     updateFrequency(slotSelector, data);
+  }
+  if ('squelch' in data) {
+    updateSquelch(slotSelector, data);
   }
   if ('antenna' in data) {
     updateDiversity(slotSelector, data);

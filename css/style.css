@@ -142,6 +142,16 @@ canvas.slotgraph {
   color: var(--color-red);
 }
 
+.squelch {
+  position: absolute;
+  bottom: 55px;
+  right: 5px;
+  font-family: 'IBM Plex Mono';
+  font-weight: 100;
+  font-style: italic;
+  color: var(--color-yellow);
+}
+
 .runtime {
   position: absolute;
   bottom: 180px;
@@ -467,6 +477,11 @@ canvas.slotgraph {
 
   .frequency {
     bottom: 25px;
+    right: 5px;
+  }
+
+  .squelch {
+    bottom: 0px;
     right: 5px;
   }
 

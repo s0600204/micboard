@@ -14,7 +14,6 @@ class SennheiserMicReportEnum(enum.Enum):
     RF = enum.auto()
     RFLevel1 = enum.auto()
     RFLevel2 = enum.auto()
-    Squelch = enum.auto()
     Status = enum.auto()
 
 
@@ -33,7 +32,6 @@ class WirelessSennheiserMic(WirelessMic):
             'RX': False,
             'TX': False,
         }
-        self.squelch = 0
         self.rf_peaks = [0] * self.ANTENNA_COUNT
         self.tx_offset = 0
 
@@ -42,15 +40,18 @@ class WirelessSennheiserMic(WirelessMic):
             SennheiserMicReportEnum.Msg: self.set_msg,
             SennheiserMicReportEnum.RFLevel1: self.set_rf_level_1,
             SennheiserMicReportEnum.RFLevel2: self.set_rf_level_2,
-            SennheiserMicReportEnum.Squelch: self.set_squelch,
         }
 
     def ch_json(self):
         return {
             **super().ch_json(),
-            'squelch': self.squelch,
             'status': self.tx_state(),
         }
+
+    # ~ def chart_json(self):
+        # ~ return {
+            # ~ **super().chart_json(),
+        # ~ }
 
     def set_msg(self, *messages):
         pass
@@ -59,9 +60,6 @@ class WirelessSennheiserMic(WirelessMic):
         pass
 
     def set_rf_level_2(self, rf_level, peak_level, is_active):
-        pass
-
-    def set_squelch(self, squelch_level):
         pass
 
     def tx_state(self):

@@ -20,6 +20,7 @@ class WirelessMicReportEnum(enum.Enum):
     Antenna = enum.auto()
     Battery = enum.auto()
     RFLevels = enum.auto()
+    Squelch = enum.auto()
     TXOffset = enum.auto()
 
 # https://stackoverflow.com/questions/17027878/algorithm-to-find-the-most-significant-bit
@@ -42,6 +43,7 @@ class WirelessMic(ChannelDevice):
         self.prev_battery = 255
         self.audio_level = 0
         self.rf_levels = [0] * self.ANTENNA_COUNT
+        self.squelch = {'db': None, 'perc': None, 'str': None}
         self.antenna = 'XX'
         self.peakstamp = time.time() - 60
         self.tx_offset = 255
@@ -52,6 +54,7 @@ class WirelessMic(ChannelDevice):
             WirelessMicReportEnum.Antenna: self.set_antenna,
             WirelessMicReportEnum.Battery: self.set_battery,
             WirelessMicReportEnum.RFLevels: self.set_rf_levels,
+            WirelessMicReportEnum.Squelch: self.set_squelch,
             WirelessMicReportEnum.TXOffset: self.set_tx_offset,
         }
 
@@ -72,6 +75,9 @@ class WirelessMic(ChannelDevice):
     def set_rf_levels(self, antenna, rf_level):
         pass
 
+    def set_squelch(self, squelch_level):
+        pass
+
     def set_tx_offset(self, tx_offset):
         pass
 
@@ -84,6 +90,7 @@ class WirelessMic(ChannelDevice):
             'battery_segments': self.BATTERY_SEGMENTS,
             'battery_status': self.battery_status.value,
             'rf_levels': self.rf_levels,
+            'squelch': self.squelch['str'],
             'tx_offset': self.tx_offset,
         }
 
@@ -98,6 +105,7 @@ class WirelessMic(ChannelDevice):
             'audio_level': self.audio_level,
             'rf_levels': self.rf_levels,
             'slot': self.slot,
+            'squelch_level': self.squelch['perc'],
             'type': self.rx.type,
             'timestamp': time.time()
         }

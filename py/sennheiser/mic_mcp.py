@@ -27,7 +27,7 @@ class WirelessMCPMic(WirelessSennheiserMic):
         'Name'      : ChannelDeviceReportEnum.Name,
         'RF1'       : SennheiserMicReportEnum.RFLevel1,
         'RF2'       : SennheiserMicReportEnum.RFLevel2,
-        'Squelch'   : SennheiserMicReportEnum.Squelch,
+        'Squelch'   : WirelessMicReportEnum.Squelch,
     }
  
     MCP_MODEL_NAMES = {
@@ -104,7 +104,15 @@ class WirelessMCPMic(WirelessSennheiserMic):
         self.antenna = self.antenna[0] + ('B' if int(is_active) else 'X')
 
     def set_squelch(self, squelch_level):
-        self.squelch = squelch_level
+        # squelch --> 0,5-25; dB in 3dB steps
+        # rf --> 0-100; percentage, equiv. 0-40dBuV
+        self.squelch['db'] = int(squelch_level)
+        if self.squelch['db'] == 0:
+            self.squelch['perc'] = None
+            self.squelch['str'] = 'squelch off'
+        else:
+            self.squelch['perc'] = int(self.squelch['db'] / 40 * 100),
+            self.squelch['str'] = f'{self.squelch['db']} dB'
 
     def set_tx_offset(self, tx_offset):
         self.tx_offset = int(tx_offset)
