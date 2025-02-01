@@ -54,7 +54,7 @@ class WirelessMic(ChannelDevice):
         if self.rx.type in ['qlxd', 'ulxd']:
             audio_level = 2 * audio_level
 
-        if self.rx.type == 'axtd':
+        if self.rx.type in ['axtd', 'slx']:
             audio_level = audio_level - 20
 
         if self.rx.type == 'uhfr':
@@ -78,6 +78,9 @@ class WirelessMic(ChannelDevice):
 
         if self.rx.type == 'axtd':
             rf_level = 100 * (rf_level / 115)
+
+        if self.rx.type == 'slx':
+            rf_level = 100 * (rf_level / 120)
 
         if self.rx.type == 'uhfr':
             rf_level = 100 * ((100 - rf_level) / 80)
@@ -179,6 +182,13 @@ class WirelessMic(ChannelDevice):
             self.set_antenna(split[3])
             self.set_rf_level(split[4])
             self.set_audio_level(split[5])
+
+        elif self.rx.type == 'slxd':
+            # 3 : audio peak
+            # 4 : audio rms
+            # 5 : rssi
+            self.set_rf_level(split[5])
+            self.set_audio_level(split[4])
 
         elif self.rx.type == 'uhfr':
             self.set_antenna(split[3])

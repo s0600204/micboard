@@ -23,7 +23,7 @@ import '../node_modules/@ibm/plex/scss/ibm-plex.scss';
 export const dataURL = 'data.json';
 
 export const micboard = [];
-micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd'];
+micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd', 'slxd'];
 micboard.IEM_MODELS = ['p10t'];
 micboard.url = [];
 micboard.displayMode = 'deskmode';
