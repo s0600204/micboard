@@ -203,7 +203,7 @@ def read_json_config(file):
         config_tree = json.load(config_file)
 
         for chan in config_tree['slots']:
-            if chan['type'] in ['uhfr', 'qlxd', 'ulxd', 'axtd', 'p10t']:
+            if chan['type'] in ['uhfr', 'qlxd', 'ulxd', 'axtd', 'slxd', 'p10t']:
                 netDev = shure.check_add_network_device(chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
 
