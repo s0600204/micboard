@@ -6,6 +6,7 @@ from util import NetworkProtocol
 
 from shure.mic_axtd import WirelessAXTDMic
 from shure.mic_qlxd import WirelessQLXDMic
+from shure.mic_slxd import WirelessSLXDMic
 from shure.mic_uhfr import WirelessUHFRMic
 from shure.mic_ulxd import WirelessULXDMic
 
@@ -19,6 +20,7 @@ class ShureNetworkDevice(NetworkDevice):
         'axtd': WirelessAXTDMic,
         'p10t': WirelessP10tIEM,
         'qlxd': WirelessQLXDMic,
+        'slxd': WirelessSLXDMic,
         'ulxd': WirelessULXDMic,
     }
 
