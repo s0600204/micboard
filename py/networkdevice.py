@@ -112,7 +112,7 @@ class ShureNetworkDevice:
 
 
     def enable_metering(self, interval):
-        if self.type in ['qlxd', 'ulxd', 'axtd', 'p10t']:
+        if self.type in ['qlxd', 'ulxd', 'axtd', 'p10t', 'slxd']:
             for i in self.get_channels():
                 self.writeQueue.put('< SET {} METER_RATE {:05d} >'.format(i, int(interval * 1000)))
         elif self.type == 'uhfr':
