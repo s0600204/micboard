@@ -24,7 +24,7 @@ class ChannelDevice:
 
 
     def set_frequency(self, frequency):
-        if self.rx.type == 'axtd':
+        if self.rx.type in ['axtd', 'slxd']:
             frequency = frequency.lstrip('0')
         self.frequency = frequency[:3] + '.' + frequency[3:]
 
