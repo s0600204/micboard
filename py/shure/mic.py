@@ -21,7 +21,6 @@ class WirelessShureMic(WirelessMic):
         self.power_lock = ''
         self.quality = 255
         self.runtime = ''
-        self.tx_offset = 255
 
         self.report_map = {
             **self.report_map,
@@ -89,6 +88,9 @@ class WirelessShureMic(WirelessMic):
             self.runtime = str(timedelta(minutes=runtime))[:-3]
         else:
             self.runtime = ''
+
+    def set_rx_gain(self, rx_gain):
+        self.rx_gain = int(rx_gain) - 18
 
     def set_tx_quality(self, quality):
         self.quality = int(quality)

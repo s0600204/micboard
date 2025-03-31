@@ -33,7 +33,6 @@ class WirelessSennheiserMic(WirelessMic):
             'TX': False,
         }
         self.rf_peaks = [0] * self.ANTENNA_COUNT
-        self.tx_offset = 0
 
         self.report_map = {
             **self.report_map,

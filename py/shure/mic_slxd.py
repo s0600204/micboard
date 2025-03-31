@@ -17,6 +17,7 @@ class WirelessSLXDMic(WirelessShureMic):
         'SLXD4QDante+' : { 'channels': 4, 'name': 'SLXD4QDAN+', },
     }
     REPORT_MAPPING = {
+        'AUDIO_GAIN'      : WirelessMicReportEnum.RXGain,
         'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
         'CHAN_NAME'       : ChannelDeviceReportEnum.Name,
         'FREQUENCY'       : ChannelDeviceReportEnum.Frequency,

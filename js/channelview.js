@@ -44,12 +44,11 @@ function infoToggle() {
   }
 }
 
-function updateTXOffset(slotSelector, data) {
-  if (data.tx_offset !== 255) {
-    slotSelector.querySelector('p.offset').innerHTML = data.tx_offset + ' dB';
-  } else {
-    slotSelector.querySelector('p.offset').innerHTML = '';
-  }
+function updateGain(slotSelector, data) {
+  slotSelector.querySelector('p.offset').innerHTML = [
+    (data.tx_gain !== null) ? data.tx_gain + ' dB (tx)' : '',
+    (data.rx_gain !== null) ? data.rx_gain + ' dB (rx)' : '',
+  ].join(" ");
 }
 
 function updateSquelch(slotSelector, data) {
@@ -249,8 +248,11 @@ function updateSelector(slotSelector, data) {
   updateCheck(data, 'antenna', () => {
     updateDiversity(slotSelector, data);
   });
-  updateCheck(data, 'tx_offset', () => {
-    updateTXOffset(slotSelector, data);
+  updateCheck(data, 'rx_gain', () => {
+    updateGain(slotSelector, data);
+  });
+  updateCheck(data, 'tx_gain', () => {
+    updateGain(slotSelector, data);
   });
   updateCheck(data, 'quality', () => {
     updateQuality(slotSelector, data);
@@ -277,8 +279,11 @@ export function updateViewOnly(slotSelector, data) {
   if ('name' in data) {
     updateName(slotSelector, data);
   }
-  if ('tx_offset' in data) {
-    updateTXOffset(slotSelector, data);
+  if ('rx_gain' in data) {
+    updateGain(slotSelector, data);
+  }
+  if ('tx_gain' in data) {
+    updateGain(slotSelector, data);
   }
   if ('battery' in data) {
     updateBattery(slotSelector, data);

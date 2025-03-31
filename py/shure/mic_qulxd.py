@@ -12,11 +12,12 @@ class WirelessQULXDMic(WirelessShureMic):
 
     ANTENNA_COUNT = 1
     REPORT_MAPPING = {
+        'AUDIO_GAIN'    : WirelessMicReportEnum.RXGain,
         'BATT_BARS'     : WirelessMicReportEnum.Battery,
         'BATT_RUN_TIME' : ShureMicReportEnum.Runtime,
         'CHAN_NAME'     : ChannelDeviceReportEnum.Name,
         'FREQUENCY'     : ChannelDeviceReportEnum.Frequency,
-        'TX_OFFSET'     : WirelessMicReportEnum.TXOffset,
+        'TX_OFFSET'     : WirelessMicReportEnum.TXGain,
         'TX_PWR_LOCK'   : ShureMicReportEnum.PowerLock,
     }
 
@@ -42,6 +43,8 @@ class WirelessQULXDMic(WirelessShureMic):
     def set_rf_levels(self, antenna, rf_level):
         self.rf_levels[antenna] = int(100 * (float(rf_level) / 115))
 
-    def set_tx_offset(self, tx_offset):
-        if tx_offset != '255':
-            self.tx_offset = int(tx_offset)
+    def set_tx_gain(self, tx_gain):
+        if tx_gain == '255':
+            self.tx_gain = None
+        else:
+            self.tx_gain = int(tx_gain)

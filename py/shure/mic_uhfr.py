@@ -16,9 +16,10 @@ class WirelessUHFRMic(WirelessShureMic):
         'UR4D' : { 'channels': 2, },
     }
     REPORT_MAPPING = {
-        'CHAN_NAME' : ChannelDeviceReportEnum.Name,
-        'FREQUENCY' : ChannelDeviceReportEnum.Frequency,
-        'TX_BAT'    : WirelessMicReportEnum.Battery,
+        'AUDIO_GAIN' : WirelessMicReportEnum.RXGain,
+        'CHAN_NAME'  : ChannelDeviceReportEnum.Name,
+        'FREQUENCY'  : ChannelDeviceReportEnum.Frequency,
+        'TX_BAT'     : WirelessMicReportEnum.Battery,
     }
 
     DCID_NAME_MAPPING = {
@@ -58,3 +59,6 @@ class WirelessUHFRMic(WirelessShureMic):
 
     def set_rf_levels(self, antenna, rf_level):
         self.rf_levels[antenna] = int(100 * ((100 - float(rf_level)) / 80))
+
+    def set_rx_gain(self, rx_gain):
+        self.rx_gain = -int(rx_gain)

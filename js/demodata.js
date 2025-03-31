@@ -181,7 +181,7 @@ function randomDataGenerator() {
     antenna: randomRfSampleGenerator(antenna_count),
     audio_level: randomAudioGenerator(),
     rf_levels: [],
-    tx_offset: randomTXOffsetGenerator(),
+    tx_gain: randomTXOffsetGenerator(),
     frequency: randomFrequencyGenerator(),
     battery: battery.battery,
     battery_status: battery.battery_status,
@@ -254,7 +254,7 @@ function meteteredRandomDataGenerator(update) {
       break;
     case 'antenna': data.antenna = randomRfSampleGenerator(data.rf_levels.length);
       break;
-    case 'tx_offset': data.tx_offset = randomTXOffsetGenerator();
+    case 'tx_gain': data.tx_gain = randomTXOffsetGenerator();
       break;
     case 'quality': data.quality = randomQualityGenerator();
       break;
@@ -311,8 +311,8 @@ export function autoRandom() {
     updateSlot(meteteredRandomDataGenerator('battery'));
   }, 890 * (12 / len));
 
-  timers.tx_offset = setInterval(() => {
-    updateSlot(meteteredRandomDataGenerator('tx_offset'));
+  timers.tx_gain = setInterval(() => {
+    updateSlot(meteteredRandomDataGenerator('tx_gain'));
   }, 1000 * (12 / len));
 
   timers.quality = setInterval(() => {

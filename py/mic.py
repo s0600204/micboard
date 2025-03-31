@@ -20,8 +20,9 @@ class WirelessMicReportEnum(enum.Enum):
     Antenna = enum.auto()
     Battery = enum.auto()
     RFLevels = enum.auto()
+    RXGain = enum.auto()
     Squelch = enum.auto()
-    TXOffset = enum.auto()
+    TXGain = enum.auto()
 
 # https://stackoverflow.com/questions/17027878/algorithm-to-find-the-most-significant-bit
 def MSB(audio_level):
@@ -46,7 +47,8 @@ class WirelessMic(ChannelDevice):
         self.squelch = {'db': None, 'perc': None, 'str': None}
         self.antenna = 'XX'
         self.peakstamp = time.time() - 60
-        self.tx_offset = 255
+        self.rx_gain = None
+        self.tx_gain = None
 
         self.report_map = {
             **self.report_map,
@@ -54,8 +56,9 @@ class WirelessMic(ChannelDevice):
             WirelessMicReportEnum.Antenna: self.set_antenna,
             WirelessMicReportEnum.Battery: self.set_battery,
             WirelessMicReportEnum.RFLevels: self.set_rf_levels,
+            WirelessMicReportEnum.RXGain: self.set_rx_gain,
             WirelessMicReportEnum.Squelch: self.set_squelch,
-            WirelessMicReportEnum.TXOffset: self.set_tx_offset,
+            WirelessMicReportEnum.TXGain: self.set_tx_gain,
         }
 
     def set_antenna(self, antenna):
@@ -75,10 +78,13 @@ class WirelessMic(ChannelDevice):
     def set_rf_levels(self, antenna, rf_level):
         pass
 
+    def set_rx_gain(self, rx_gain):
+        pass
+
     def set_squelch(self, squelch_level):
         pass
 
-    def set_tx_offset(self, tx_offset):
+    def set_tx_gain(self, tx_gain):
         pass
 
     def ch_json(self):
@@ -90,8 +96,9 @@ class WirelessMic(ChannelDevice):
             'battery_segments': self.BATTERY_SEGMENTS,
             'battery_status': self.battery_status.value,
             'rf_levels': self.rf_levels,
+            'rx_gain': self.rx_gain,
             'squelch': self.squelch['str'],
-            'tx_offset': self.tx_offset,
+            'tx_gain': self.tx_gain,
         }
 
     def ch_json_mini(self):

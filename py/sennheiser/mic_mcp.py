@@ -20,7 +20,7 @@ class WirelessMCPMic(WirelessSennheiserMic):
     }
     REPORT_MAPPING = {
         'AF'        : WirelessMicReportEnum.AFLevel,
-        'AfOut'     : WirelessMicReportEnum.TXOffset,
+        'AfOut'     : WirelessMicReportEnum.RXGain,
         'Bat'       : WirelessMicReportEnum.Battery,
         'Frequency' : ChannelDeviceReportEnum.Frequency,
         'Msg'       : SennheiserMicReportEnum.Msg,
@@ -114,5 +114,5 @@ class WirelessMCPMic(WirelessSennheiserMic):
             self.squelch['perc'] = int(self.squelch['db'] / 40 * 100),
             self.squelch['str'] = f'{self.squelch['db']} dB'
 
-    def set_tx_offset(self, tx_offset):
-        self.tx_offset = int(tx_offset)
+    def set_rx_gain(self, rx_gain):
+        self.rx_gain = int(rx_gain)

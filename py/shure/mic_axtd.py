@@ -14,6 +14,7 @@ class WirelessAXTDMic(WirelessShureMic):
     }
     REPORT_MAPPING = {
         'ANTENNA_STATUS'  : WirelessMicReportEnum.Antenna,
+        'AUDIO_GAIN'      : WirelessMicReportEnum.RXGain,
         'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
         'CHAN_NAME'       : ChannelDeviceReportEnum.Name,
         'CHAN_QUALITY'    : ShureMicReportEnum.TXQuality,
@@ -22,7 +23,7 @@ class WirelessAXTDMic(WirelessShureMic):
         'TX_BATT_BARS'    : WirelessMicReportEnum.Battery,
         'TX_BATT_MINS'    : ShureMicReportEnum.Runtime,
         'TX_LOCK'         : ShureMicReportEnum.PowerLock,
-        'TX_OFFSET'       : WirelessMicReportEnum.TXOffset,
+        'TX_OFFSET'       : WirelessMicReportEnum.TXGain,
     }
 
     DCID_NAME_MAPPING = {
@@ -57,6 +58,8 @@ class WirelessAXTDMic(WirelessShureMic):
     def set_rf_levels(self, antenna, rf_level):
         self.rf_levels[antenna] = int(100 * (float(rf_level) / 115))
 
-    def set_tx_offset(self, tx_offset):
-        if tx_offset != '255':
-            self.tx_offset = int(tx_offset) - 12
+    def set_tx_gain(self, tx_gain):
+        if tx_gain == '255':
+            self.tx_gain = None
+        else:
+            self.tx_gain = int(tx_gain) - 12
