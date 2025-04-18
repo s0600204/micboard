@@ -65,6 +65,26 @@ def get_supported_device_models():
     models['iem'].sort()
     return models
 
+def get_supported_device_models():
+    models = {
+        'all': [],
+        'mic': [],
+        'iem': [],
+    }
+
+    for devtype, devclass in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
+        if issubclass(devclass, WirelessIEM):
+            models['iem'].append(devtype)
+        elif issubclass(devclass, WirelessMic):
+            models['mic'].append(devtype)
+
+    models['all'] = models['mic'] + models['iem']
+
+    models['all'].sort()
+    models['mic'].sort()
+    models['iem'].sort()
+    return models
+
 def watchdog_monitor():
     for rx in (rx for rx in NetworkDevices if rx.rx_com_status == 'CONNECTED'):
         if (int(time.perf_counter()) - rx.socket_watchdog) > 5:

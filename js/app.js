@@ -27,8 +27,9 @@ import '../css/style.css';
 export const dataURL = 'data.json';
 
 export const micboard = [];
-micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd'];
-micboard.IEM_MODELS = ['p10t'];
+micboard.ALL_MODELS = [];
+micboard.MIC_MODELS = [];
+micboard.IEM_MODELS = [];
 micboard.url = [];
 micboard.displayMode = 'deskmode';
 micboard.infoDrawerMode = 'elinfo11';
@@ -236,6 +237,9 @@ function initialMap(callback) {
         micboard.localURL = data.url;
         micboard.groups = groupTableBuilder(data);
         micboard.config = data.config;
+        micboard.ALL_MODELS = data.models.all;
+        micboard.IEM_MODELS = data.models.iem;
+        micboard.MIC_MODELS = data.models.mic;
         mapGroups();
 
         if (micboard.config.slots.length < 1) {

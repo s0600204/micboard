@@ -5,8 +5,6 @@ import { Sortable, Plugins } from '@shopify/draggable';
 import { micboard, updateHash } from './app.js';
 import { postJSON } from './data.js';
 
-const NET_DEVICE_TYPES = ['axtd', 'ulxd', 'qlxd', 'uhfr', 'p10t'];
-
 function updateEditEntry(slotSelector, data) {
   if (data.ip) {
     slotSelector.querySelector('.cfg-ip').value = data.ip;
@@ -73,6 +71,7 @@ function renderSlotList() {
     t = document.getElementById('config-slot-template').content.cloneNode(true);
     t.querySelector('label').innerHTML = 'slot ' + i;
     t.querySelector('.cfg-row').id = 'editslot-' + i;
+    populateTypeSelect(t.querySelector('.cfg-type'));
     document.getElementById('editor_holder').append(t);
   }
 
@@ -107,6 +106,7 @@ function renderDiscoverdDeviceList() {
       e.channel = i;
       if (discoverFilter(e, currentSlotList)) {
         t = document.getElementById('config-slot-template').content.cloneNode(true);
+        populateTypeSelect(t.querySelector('.cfg-type'));
         updateEditEntry(t, e);
         document.getElementById('discovered_list').append(t);
       }
@@ -126,7 +126,7 @@ function generateJSONConfig() {
       output.slot = slot;
       output.type = configBoard[i].querySelector('.cfg-type').value;
 
-      if (NET_DEVICE_TYPES.indexOf(output.type) > -1) {
+      if (micboard.ALL_MODELS.includes(output.type)) {
         output.ip = configBoard[i].querySelector('.cfg-ip').value;
         output.channel = parseInt(configBoard[i].querySelector('.cfg-channel').value, 10);
       }
@@ -163,6 +163,20 @@ function updateHiddenSlots() {
       e.querySelector('.cfg-channel').style.display = "block"
     }
   })
+}
+
+function populateTypeSelect(selectDOM) {
+  selectDOM.appendChild(document.createElement('option'));
+
+  for (const modelType of micboard.ALL_MODELS) {
+    const modelOption = document.createElement('option');
+    modelOption.text = modelType;
+    selectDOM.appendChild(modelOption);
+  }
+
+  const offlineOption = document.createElement('option');
+  offlineOption.text = 'offline';
+  selectDOM.appendChild(offlineOption);
 }
 
 export function initConfigEditor() {
@@ -220,6 +234,7 @@ export function initConfigEditor() {
     let t;
     for (let i = 0; i < 4; i += 1) {
       t = document.getElementById('config-slot-template').content.cloneNode(true);
+      populateTypeSelect(t.querySelector('.cfg-type'));
       document.getElementById('editor_holder').append(t);
     }
     updateSlotID();
