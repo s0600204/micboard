@@ -12,8 +12,8 @@ import time
 import ifaddr
 
 import config
-from device_config import BASE_CONST
 from discover import add_rx_to_dlist
+from shure.networkdevice import ShureNetworkDevice
 
 
 class ShureDiscovery:
@@ -199,10 +199,14 @@ class ShureDiscovery:
 
     def get_device_definition(self, dcid_definition):
         dcid_model = dcid_definition['model']
-        for (type_k, type_v) in BASE_CONST.items():
-            for (model_k, model_v) in type_v['DCID_MODEL'].items():
-                if model_k == dcid_model:
-                    return type_k, model_v
+        for device_type, device_class in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
+            for model_name, model in device_class.DCID_NAME_MAPPING.items():
+                if model_name == dcid_model:
+                    return {
+                        'type': device_type,
+                        **device_class.MODELS[model],
+                    }
+
         return None
 
     def process_discovery_packet(self, ip, data):
@@ -217,10 +221,10 @@ class ShureDiscovery:
             logging.warning('Unrecognised DCID: %s', dcid)
             return
 
-        # Get device definition from BASE_CONST
-        rx_type, channels = self.get_device_definition(device)
+        # Get device definition from device class
+        device = self.get_device_definition(device)
 
-        add_rx_to_dlist(ip, rx_type, channels)
+        add_rx_to_dlist(ip, device['type'], device['channels'])
 
     def start(self):
         self.thread.start()

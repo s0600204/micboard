@@ -6,6 +6,10 @@ from shure.mic import ShureMicReportEnum, WirelessShureMic
 class WirelessAXTDMic(WirelessShureMic):
 
     ANTENNA_COUNT = 4
+    MODELS = {
+        'AD4D': { 'channels': 2, },
+        'AD4Q': { 'channels': 4, },
+    }
     REPORT_MAPPING = {
         'ANTENNA_STATUS'  : WirelessMicReportEnum.Antenna,
         'AUDIO_LEVEL_RMS' : WirelessMicReportEnum.AFLevel,
@@ -17,6 +21,11 @@ class WirelessAXTDMic(WirelessShureMic):
         'TX_BATT_MINS'    : ShureMicReportEnum.Runtime,
         'TX_LOCK'         : ShureMicReportEnum.PowerLock,
         'TX_OFFSET'       : WirelessMicReportEnum.TXOffset,
+    }
+
+    DCID_NAME_MAPPING = {
+        'AD4D': 'AD4D',
+        'AD4Q': 'AD4Q',
     }
 
     def build_query_strings(self):

@@ -7,11 +7,18 @@ from shure.iem import WirelessShureIEM
 
 class WirelessP10tIEM(WirelessShureIEM):
 
+    MODELS = {
+        'P10T': { 'channels': 2, },
+    }
     REPORT_MAPPING = {
         'AUDIO_IN_LVL_L' : WirelessIEMReportEnum.AFLevelL,
         'AUDIO_IN_LVL_R' : WirelessIEMReportEnum.AFLevelR,
         'CHAN_NAME'      : ChannelDeviceReportEnum.Name,
         'FREQUENCY'      : ChannelDeviceReportEnum.Frequency,
+    }
+
+    DCID_NAME_MAPPING = {
+        'PSM1KTx' : 'P10T',
     }
 
     def build_get_all_strings(self):

@@ -4,8 +4,9 @@ from channel import chart_update_list, data_update_list
 from networkdevice import NetworkDevice
 
 from shure.mic_axtd import WirelessAXTDMic
-from shure.mic_qulxd import WirelessQULXDMic
+from shure.mic_qlxd import WirelessQLXDMic
 from shure.mic_uhfr import WirelessUHFRMic
+from shure.mic_ulxd import WirelessULXDMic
 
 from shure.iem_p10t import WirelessP10tIEM
 
@@ -16,9 +17,9 @@ class ShureNetworkDevice(NetworkDevice):
     DEVICE_CLASS_MAP = {
         'axtd': WirelessAXTDMic,
         'p10t': WirelessP10tIEM,
-        'qlxd': WirelessQULXDMic,
+        'qlxd': WirelessQLXDMic,
         'uhfr': WirelessUHFRMic,
-        'ulxd': WirelessQULXDMic,
+        'ulxd': WirelessULXDMic,
     }
 
     def parse_raw_rx(self, data):

@@ -8,10 +8,19 @@ from shure.mic import WirelessShureMic
 class WirelessUHFRMic(WirelessShureMic):
 
     ANTENNA_COUNT = 2
+    MODELS = {
+        'UR4S' : { 'channels': 1, },
+        'UR4D' : { 'channels': 2, },
+    }
     REPORT_MAPPING = {
         'CHAN_NAME' : ChannelDeviceReportEnum.Name,
         'FREQUENCY' : ChannelDeviceReportEnum.Frequency,
         'TX_BAT'    : WirelessMicReportEnum.Battery,
+    }
+
+    DCID_NAME_MAPPING = {
+        'UR4S' : 'UR4S',
+        'UR4D' : 'UR4D',
     }
 
     def build_get_all_strings(self):
