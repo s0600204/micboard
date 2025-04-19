@@ -3,6 +3,7 @@ from math import ceil
 from channel import ChannelDeviceReportEnum
 from mic import MSB, WirelessMicReportEnum
 from shure.mic import WirelessShureMic
+from util import NetworkProtocol
 
 
 class WirelessUHFRMic(WirelessShureMic):

@@ -2,6 +2,7 @@ import logging
 
 from channel import chart_update_list, data_update_list
 from networkdevice import NetworkDevice
+from util import NetworkProtocol
 
 from shure.mic_axtd import WirelessAXTDMic
 from shure.mic_qlxd import WirelessQLXDMic
@@ -18,7 +19,6 @@ class ShureNetworkDevice(NetworkDevice):
         'axtd': WirelessAXTDMic,
         'p10t': WirelessP10tIEM,
         'qlxd': WirelessQLXDMic,
-        'uhfr': WirelessUHFRMic,
         'ulxd': WirelessULXDMic,
     }
 
@@ -53,8 +53,17 @@ class ShureNetworkDevice(NetworkDevice):
 
     def split_raw_rx(self, data):
         data = data.decode(self.ENCODING)
-        if self.type == 'uhfr':
-            return [entry for entry in data.split("*") if entry]
-
         sep = '>'
         return [entry + sep for entry in data.split(sep) if entry]
+
+
+class ShureNetworkUDPDevice(ShureNetworkDevice):
+
+    DEVICE_CLASS_MAP = {
+        'uhfr': WirelessUHFRMic,
+    }
+    NETWORK_PROTOCOL = NetworkProtocol.UDP
+
+    def split_raw_rx(self, data):
+        data = data.decode(self.ENCODING)
+        return [entry for entry in data.split("*") if entry]

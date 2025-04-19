@@ -9,7 +9,7 @@ import logging
 from channel import chart_update_list, data_update_list
 from iem import WirelessIEM
 from mic import WirelessMic
-from shure.networkdevice import ShureNetworkDevice
+from shure.networkdevice import ShureNetworkDevice, ShureNetworkUDPDevice
 
 
 NetworkDevices = []
@@ -32,6 +32,8 @@ def check_add_network_device(ip, type):
 
     if type in ShureNetworkDevice.DEVICE_CLASS_MAP:
         net = ShureNetworkDevice(ip, type)
+    elif type in ShureNetworkUDPDevice.DEVICE_CLASS_MAP:
+        net = ShureNetworkUDPDevice(ip, type)
     else:
         logging.critical(f"Unrecognised Device type {type}")
     NetworkDevices.append(net)

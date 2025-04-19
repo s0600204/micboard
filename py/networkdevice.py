@@ -4,7 +4,7 @@ import socket
 from collections import defaultdict
 import logging
 
-from device_config import BASE_CONST
+from util import NetworkProtocol
 
 
 class NetworkDevice:
@@ -12,6 +12,7 @@ class NetworkDevice:
     PORT = None
     ENCODING = 'UTF-8'
     METERING_INTERVAL = 0.1 # seconds
+    NETWORK_PROTOCOL = NetworkProtocol.TCP
     DEVICE_CLASS_MAP = {}
 
     def __init__(self, ip, type):
@@ -26,13 +27,12 @@ class NetworkDevice:
 
     def socket_connect(self):
         try:
-            if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
+            if self.NETWORK_PROTOCOL == NetworkProtocol.TCP:
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #TCP
                 self.f.settimeout(.2)
                 self.f.connect((self.ip, self.PORT))
 
-
-            elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
+            elif self.NETWORK_PROTOCOL == NetworkProtocol.UDP:
                 self.f = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
 
             self.set_rx_com_status('CONNECTING')
@@ -52,10 +52,10 @@ class NetworkDevice:
         self.socket_watchdog = int(time.perf_counter())
 
     def socket_send(self, message):
-        if BASE_CONST[self.type]['PROTOCOL'] == 'TCP':
+        if self.NETWORK_PROTOCOL == NetworkProtocol.TCP:
             self.f.sendall(bytearray(message, self.ENCODING))
 
-        elif BASE_CONST[self.type]['PROTOCOL'] == 'UDP':
+        elif self.NETWORK_PROTOCOL == NetworkProtocol.UDP:
             self.f.sendto(bytearray(message, self.ENCODING), (self.ip, self.PORT))
 
     def fileno(self):
