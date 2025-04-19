@@ -12,6 +12,11 @@ from mic import WirelessMic
 from shure.networkdevice import ShureNetworkDevice, ShureNetworkUDPDevice
 
 
+NETWORK_DEVICE_CLASSES = [
+    ShureNetworkDevice,
+    ShureNetworkUDPDevice,
+]
+
 NetworkDevices = []
 DeviceMessageQueue = queue.Queue()
 
@@ -30,14 +35,14 @@ def check_add_network_device(ip, type):
     if net:
         return net
 
-    if type in ShureNetworkDevice.DEVICE_CLASS_MAP:
-        net = ShureNetworkDevice(ip, type)
-    elif type in ShureNetworkUDPDevice.DEVICE_CLASS_MAP:
-        net = ShureNetworkUDPDevice(ip, type)
-    else:
-        logging.critical(f"Unrecognised Device type {type}")
-    NetworkDevices.append(net)
-    return net
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        if type in net_device_class.DEVICE_CLASS_MAP:
+            net = net_device_class(ip, type)
+            NetworkDevices.append(net)
+            return net
+
+    logging.critical(f"Unrecognised Device type {type}")
+    return None
 
 def get_supported_device_models():
     models = {
@@ -46,11 +51,12 @@ def get_supported_device_models():
         'iem': [],
     }
 
-    for devtype, devclass in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
-        if issubclass(devclass, WirelessIEM):
-            models['iem'].append(devtype)
-        elif issubclass(devclass, WirelessMic):
-            models['mic'].append(devtype)
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        for devtype, devclass in net_device_class.DEVICE_CLASS_MAP.items():
+            if issubclass(devclass, WirelessIEM):
+                models['iem'].append(devtype)
+            elif issubclass(devclass, WirelessMic):
+                models['mic'].append(devtype)
 
     models['all'] = models['mic'] + models['iem']
 
