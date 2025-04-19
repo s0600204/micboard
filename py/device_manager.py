@@ -25,15 +25,15 @@ def get_network_device_by_slot(slot):
             if channel.slot == slot:
                 return channel
 
-def check_add_network_device(manufacturer, ip, type):
+def check_add_network_device(ip, type):
     net = get_network_device_by_ip(ip)
     if net:
         return net
 
-    if manufacturer == "Shure":
+    if type in ShureNetworkDevice.DEVICE_CLASS_MAP:
         net = ShureNetworkDevice(ip, type)
     else:
-        logging.critical(f"Unrecognised Device manufacturer {manufacturer}")
+        logging.critical(f"Unrecognised Device type {type}")
     NetworkDevices.append(net)
     return net
 

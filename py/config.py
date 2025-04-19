@@ -205,8 +205,7 @@ def read_json_config(file):
 
         for chan in config_tree['slots']:
             if chan['type'] in device_config.BASE_CONST:
-                manufacturer = device_config.BASE_CONST[chan['type']]['MANUFACTURER']
-                netDev = device_manager.check_add_network_device(manufacturer, chan['ip'], chan['type'])
+                netDev = device_manager.check_add_network_device(chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
 
             elif chan['type'] == 'offline':
