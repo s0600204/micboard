@@ -7,7 +7,6 @@ import uuid
 import time
 from shutil import copyfile
 
-import device_config
 import device_manager
 import offline
 import tornado_server
@@ -200,11 +199,12 @@ def get_version_number():
 def read_json_config(file):
     global config_tree
     global gif_dir
+    supported_models = device_manager.get_supported_device_models()['all']
     with open(file) as config_file:
         config_tree = json.load(config_file)
 
         for chan in config_tree['slots']:
-            if chan['type'] in device_config.BASE_CONST:
+            if chan['type'] in supported_models:
                 netDev = device_manager.check_add_network_device(chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
 
