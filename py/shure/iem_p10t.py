@@ -7,6 +7,8 @@ from shure.iem import WirelessShureIEM
 
 class WirelessP10tIEM(WirelessShureIEM):
 
+    NAME = 'PSM1000'
+
     MODELS = {
         'P10T': { 'channels': 2, },
     }

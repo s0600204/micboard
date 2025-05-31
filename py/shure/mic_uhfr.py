@@ -8,6 +8,8 @@ from util import NetworkProtocol
 
 class WirelessUHFRMic(WirelessShureMic):
 
+    NAME = 'UHF-R'
+
     ANTENNA_COUNT = 2
     MODELS = {
         'UR4S' : { 'channels': 1, },

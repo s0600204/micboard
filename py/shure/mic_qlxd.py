@@ -3,8 +3,10 @@ from shure.mic_qulxd import WirelessQULXDMic
 
 class WirelessQLXDMic(WirelessQULXDMic):
 
+    NAME = 'QLX-D'
+
     MODELS = {
-        'QLXD4S' : { 'channels': 1, },
+        'QLXD4S' : { 'channels': 1, 'name': 'QLXD4', },
     }
 
     DCID_NAME_MAPPING = {

@@ -5,6 +5,8 @@ from shure.mic import ShureMicReportEnum, WirelessShureMic
 
 class WirelessAXTDMic(WirelessShureMic):
 
+    NAME = 'Axient Digital'
+
     ANTENNA_COUNT = 4
     MODELS = {
         'AD4D': { 'channels': 2, },
