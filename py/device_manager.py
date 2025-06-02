@@ -144,6 +144,10 @@ def SocketService():
         readrx = [rx for rx in NetworkDevices if rx.rx_com_status in ['CONNECTING', 'CONNECTED']]
         writerx = [rx for rx in readrx if not rx.writeQueue.empty()]
 
+        if not readrx:
+            time.sleep(1)
+            continue
+
         read_socks, write_socks, error_socks = select.select(readrx, writerx, readrx, .2)
 
         for rx in read_socks:
