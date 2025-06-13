@@ -45,6 +45,8 @@ class StandaloneShureDiscovery:
         device_list = {}
 
         for device in devices:
+            if device.find("PkgType").text != "Primary":
+                continue
             model = device.find('Key').text
             model_name = device.find('ModelName').text
             dcid = []
