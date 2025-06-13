@@ -4,4 +4,4 @@ Modern Shure devices are discovered via [Service Location Protocol](https://en.w
 Micboard includes a utility to convert the DCID list included with the [Shure Update Utility](http://www.shure.com/americas/products/software/utilities/shure-update-utility) to file that can be included with Micboard.
 
 The conversion utility can be run within the micboard directory
-`python discover.py -c -o dcid.json`.  Running the utility without arguments shows Shure devices discovered on the network.
+`python shure_standalone_discovery.py -c -o dcid.json`.  Running the utility without arguments shows Shure devices discovered on the network.
