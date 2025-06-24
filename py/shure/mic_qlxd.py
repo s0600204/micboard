@@ -12,3 +12,6 @@ class WirelessQLXDMic(WirelessQULXDMic):
         'QLX-D1GSingle'  : 'QLXD4S',
         'QLX-DIsmSingle' : 'QLXD4S',
     }
+    FCTN_NAME_MAPPING = {
+        'QLXD4' : 'QLXD4S',
+    }

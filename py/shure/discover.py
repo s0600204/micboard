@@ -19,6 +19,7 @@ from shure.networkdevice import ShureNetworkDevice
 class ShureDiscovery:
 
     DCID_JSON_FILE = config.app_dir('dcid.json')
+    IGNORED_FCTN = ('ACNPROXY', 'WWB6')
     MCAST_GRP = '239.255.254.253'
     MCAST_PORT = 8427
     WINDOWS_KEEPALIVE_TIMEOUT = 30 # seconds
@@ -197,32 +198,45 @@ class ShureDiscovery:
             return dcid[dcid.index('cd:')+3:]
         return None
 
-    def get_device_definition(self, dcid_definition):
-        dcid_model = dcid_definition['model']
+    def get_device_definition(self, lookup_attr, lookup_key):
         for device_type, device_class in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
-            for model_name, model in device_class.DCID_NAME_MAPPING.items():
-                if model_name == dcid_model:
+            for model_name, model in getattr(device_class, lookup_attr, {}).items():
+                if model_name == lookup_key:
                     return {
                         'type': device_type,
                         **device_class.MODELS[model],
                     }
-
         return None
 
     def process_discovery_packet(self, ip, data):
-        # Get DCID of device
-        dcid = self.get_dcid_from_slp_attrs(*self.get_attrs_from_slp(data))
-        if not dcid:
-            return
+        # Extract attributes from SLP data
+        v_attrs, kv_attrs = self.get_attrs_from_slp(data)
 
-        # Get device definition matching DCID
-        device = self.get_dcid_definition(dcid)
+        # Method 1: Fixed Component Type Name (FCTN)
+        device = False
+        fctn = kv_attrs.get('acn-fctn', None)
+        if fctn:
+            if fctn in self.IGNORED_FCTN:
+                return
+            device = self.get_device_definition('FCTN_NAME_MAPPING', fctn)
+            if not device:
+                logging.debug('Unrecognised FCTN: %s', fctn)
+
+        # Method 2: Device Class ID
         if not device:
-            logging.warning('Unrecognised DCID: %s', dcid)
-            return
+            # Get DCID of device
+            dcid = self.get_dcid_from_slp_attrs(v_attrs, kv_attrs)
+            if not dcid:
+                return
 
-        # Get device definition from device class
-        device = self.get_device_definition(device)
+            # Get entry from dcid.json matching DCID
+            definition = self.get_dcid_definition(dcid)
+            if not definition:
+                logging.warning('Unrecognised DCID: %s', dcid)
+                return
+
+            # Get device definition from device class
+            device = self.get_device_definition('DCID_NAME_MAPPING', definition['model'])
 
         add_rx_to_dlist(ip, device['type'], device['channels'])
 
