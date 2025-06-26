@@ -30,6 +30,7 @@ export const micboard = [];
 micboard.ALL_MODELS = [];
 micboard.MIC_MODELS = [];
 micboard.IEM_MODELS = [];
+micboard.MODEL_INFO = {};
 micboard.url = [];
 micboard.displayMode = 'deskmode';
 micboard.infoDrawerMode = 'elinfo11';
@@ -240,6 +241,7 @@ function initialMap(callback) {
         micboard.ALL_MODELS = data.models.all;
         micboard.IEM_MODELS = data.models.iem;
         micboard.MIC_MODELS = data.models.mic;
+        micboard.MODEL_INFO = data.model_info;
         mapGroups();
 
         if (micboard.config.slots.length < 1) {

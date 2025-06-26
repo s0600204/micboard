@@ -51,11 +51,13 @@ def micboard_json(network_devices):
     for device in discover.time_filterd_discovered_list():
         discovered.append(device)
 
-    models = device_manager.get_supported_device_models()
+    model_info = device_manager.get_supported_device_model_info()
+    model_types = device_manager.get_supported_device_model_types()
 
     return json.dumps({
         'receivers': data, 'url': url, 'gif': gifs, 'jpg': jpgs, 'mp4': mp4s,
-        'config': config.config_tree, 'discovered': discovered, 'models': models,
+        'config': config.config_tree, 'discovered': discovered, 'models': model_types,
+        'model_info': model_info,
     }, sort_keys=True, indent=4)
 
 class IndexHandler(web.RequestHandler):

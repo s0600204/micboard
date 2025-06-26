@@ -44,7 +44,24 @@ def check_add_network_device(ip, type):
     logging.critical(f"Unrecognised Device type {type}")
     return None
 
-def get_supported_device_models():
+def get_supported_device_model_info():
+    device_info = {}
+
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        for device_type, device_class in net_device_class.DEVICE_CLASS_MAP.items():
+            device_info[device_type] = {
+                'name': device_class.NAME,
+                'models': {},
+            }
+            models = getattr(device_class, 'MODELS', {}).items()
+            for model_id, model_definition in models:
+                device_info[device_type]['models'][model_id] = {
+                    'name': model_definition.get('name', model_id),
+                    'channels': model_definition['channels'],
+                }
+    return device_info
+
+def get_supported_device_model_types():
     models = {
         'all': [],
         'mic': [],

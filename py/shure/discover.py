@@ -204,6 +204,7 @@ class ShureDiscovery:
                 if model_name == lookup_key:
                     return {
                         'type': device_type,
+                        'model': model,
                         **device_class.MODELS[model],
                     }
         return None
@@ -238,7 +239,7 @@ class ShureDiscovery:
             # Get device definition from device class
             device = self.get_device_definition('DCID_NAME_MAPPING', definition['model'])
 
-        add_rx_to_dlist(ip, device['type'], device['channels'])
+        add_rx_to_dlist(ip, device['type'], device['model'], device['channels'])
 
     def start(self):
         self.thread.start()

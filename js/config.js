@@ -5,11 +5,24 @@ import { Sortable, Plugins } from '@shopify/draggable';
 import { micboard, updateHash } from './app.js';
 import { postJSON } from './data.js';
 
+const TYPE_SEPARATOR = '__';
+const OFFLINE_TYPE_VALUE = 'offline';
+
+function buildTypeValue(data) {
+  if (data.type == OFFLINE_TYPE_VALUE)
+    return data.type;
+  return data.type + TYPE_SEPARATOR + data.model;
+}
+
+function splitTypeValue(value) {
+  return value.split(TYPE_SEPARATOR);
+}
+
 function updateEditEntry(slotSelector, data) {
   if (data.ip) {
     slotSelector.querySelector('.cfg-ip').value = data.ip;
   }
-  slotSelector.querySelector('.cfg-type').value = data.type;
+  slotSelector.querySelector('.cfg-type').value = buildTypeValue(data);
   slotSelector.querySelector('.cfg-channel').value = data.channel;
   console.log(data);
 }
@@ -124,7 +137,7 @@ function generateJSONConfig() {
       const output = {};
 
       output.slot = slot;
-      output.type = configBoard[i].querySelector('.cfg-type').value;
+      [output.type, output.model] = splitTypeValue(configBoard[i].querySelector('.cfg-type').value);
 
       if (micboard.ALL_MODELS.includes(output.type)) {
         output.ip = configBoard[i].querySelector('.cfg-ip').value;
@@ -168,14 +181,25 @@ function updateHiddenSlots() {
 function populateTypeSelect(selectDOM) {
   selectDOM.appendChild(document.createElement('option'));
 
-  for (const modelType of micboard.ALL_MODELS) {
-    const modelOption = document.createElement('option');
-    modelOption.text = modelType;
-    selectDOM.appendChild(modelOption);
+  for (let type in micboard.MODEL_INFO) {
+    const typeInfo = micboard.MODEL_INFO[type];
+    const group = document.createElement('optgroup');
+    group.label = typeInfo.name;
+
+    for (let model in typeInfo.models) {
+      const modelInfo = typeInfo.models[model];
+      const option = document.createElement('option');
+      option.value = [type, model].join(TYPE_SEPARATOR);
+      option.innerHTML = modelInfo.name;
+      group.appendChild(option);
+    }
+
+    selectDOM.appendChild(group);
   }
 
   const offlineOption = document.createElement('option');
-  offlineOption.text = 'offline';
+  offlineOption.text = 'Offline'; // @todo: l10n
+  offlineOption.value = 'offline';
   selectDOM.appendChild(offlineOption);
 }
 

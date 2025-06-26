@@ -4,7 +4,7 @@ import time
 discovered = []
 
 
-def add_rx_to_dlist(ip, rx_type, channels):
+def add_rx_to_dlist(ip, rx_type, model, channels):
     rx = next((x for x in discovered if x['ip'] == ip), None)
 
     if rx:
@@ -14,6 +14,7 @@ def add_rx_to_dlist(ip, rx_type, channels):
         discovered.append({
             'ip' : ip,
             'type': rx_type,
+            'model': model,
             'channels': channels,
             'timestamp': time.time()
         })
