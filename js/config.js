@@ -23,7 +23,10 @@ function updateEditEntry(slotSelector, data) {
     slotSelector.querySelector('.cfg-ip').value = data.ip;
   }
   slotSelector.querySelector('.cfg-type').value = buildTypeValue(data);
-  slotSelector.querySelector('.cfg-channel').value = data.channel;
+
+  const channelInput = slotSelector.querySelector('.cfg-channel');
+  updateChannelCount(channelInput, data.type, data.model);
+  channelInput.value = data.channel;
   console.log(data);
 }
 
@@ -174,8 +177,23 @@ function updateHiddenSlots() {
     } else {
       e.querySelector('.cfg-ip').style.display = "block"
       e.querySelector('.cfg-channel').style.display = "block"
+      updateChannelCount(e.querySelector('.cfg-channel'), ...splitTypeValue(type));
     }
   })
+}
+
+function updateChannelCount(channelDOM, type, model) {
+  const previousValue = channelDOM.value;
+  const channelLimit = micboard.MODEL_INFO[type].models[model].channels;
+  while (channelDOM.firstChild)
+    channelDOM.removeChild(channelDOM.firstChild);
+
+  for (let chan = 0; chan < channelLimit; ++chan) {
+    const channelOption = document.createElement('option');
+    channelOption.text = chan + 1;
+    channelDOM.appendChild(channelOption);
+  }
+  channelDOM.value = Math.min(Math.max(1, previousValue), channelLimit);
 }
 
 function populateTypeSelect(selectDOM) {
