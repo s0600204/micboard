@@ -13,6 +13,14 @@ class ShureMicReportEnum(enum.Enum):
 
 class WirelessShureMic(WirelessMic):
 
+    BATTERY_LEVEL_MAP = {
+        '001': (1, WirelessMicBatteryStatus.Critical),
+        '002': (2, WirelessMicBatteryStatus.Critical),
+        '003': (3, WirelessMicBatteryStatus.Replace),
+        '004': (4, WirelessMicBatteryStatus.Good),
+        '005': (5, WirelessMicBatteryStatus.Good),
+        '255': (0, WirelessMicBatteryStatus.Unknown),
+    }
     BATTERY_SEGMENTS = 5
 
     def __init__(self, rx, cfg):
@@ -57,27 +65,6 @@ class WirelessShureMic(WirelessMic):
         bitmap = int(bitmap)
         if bitmap >> 7:
             self.set_peak_flag()
-
-    def set_battery(self, level):
-        status_list = [
-            None,
-            WirelessMicBatteryStatus.Critical,
-            WirelessMicBatteryStatus.Critical,
-            WirelessMicBatteryStatus.Replace,
-            WirelessMicBatteryStatus.Good,
-            WirelessMicBatteryStatus.Good
-        ]
-        if level in ['U', '255']:
-            self.battery = 0
-            if (time.time() - self.timestamp) < BATTERY_TIMEOUT:
-                self.battery_status = status_list[self.prev_battery]
-            else:
-                self.battery_status == WirelessMicBatteryStatus.Unknown
-        else:
-            self.battery = int(level)
-            self.battery_status = status_list[self.battery]
-            self.prev_battery = self.battery
-            self.timestamp = time.time()
 
     def set_power_lock(self, power_lock):
         if power_lock in ['OFF', 'UNKN', 'UNKNOWN', 'NONE']:

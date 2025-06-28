@@ -10,6 +10,13 @@ class WirelessMCPMic(WirelessSennheiserMic):
 
     NAME = 'Evolution Wireless'
 
+    BATTERY_LEVEL_MAP = {
+        '0':   (0, WirelessMicBatteryStatus.Critical),
+        '30':  (1, WirelessMicBatteryStatus.Replace),
+        '70':  (2, WirelessMicBatteryStatus.Good),
+        '100': (3, WirelessMicBatteryStatus.Good),
+        '?':   (0, WirelessMicBatteryStatus.Unknown),
+    }
     CYCLIC_ATTRS = ['AF', 'Bat', 'Config', 'Msg', 'States', 'RF', 'RF1', 'RF2']
     MODELS = {
         'EM300G3'    : { 'channels': 1, 'name': 'EM 300 G3', },
@@ -56,23 +63,6 @@ class WirelessMCPMic(WirelessSennheiserMic):
         self.peak_level = min(int(peak_level), 100)
         if self.audio_level == 100 or self.peak_level == 100:
             self.set_peak_flag()
-
-    def set_battery(self, level):
-        level_dict = {
-            '0':   (0, WirelessMicBatteryStatus.Critical),
-            '30':  (1, WirelessMicBatteryStatus.Replace),
-            '70':  (2, WirelessMicBatteryStatus.Good),
-            '100': (3, WirelessMicBatteryStatus.Good),
-            '?':   (0, WirelessMicBatteryStatus.Unknown),
-        }
-        self.battery = level_dict[level][0]
-        self.battery_status = level_dict[level][1]
-
-        if self.battery_status != WirelessMicBatteryStatus.Unknown:
-            self.prev_battery = level
-            self.timestamp = time.time()
-        elif (time.time() - self.timestamp) < BATTERY_TIMEOUT:
-            self.battery_status = level_dict[self.prev_battery][1]
 
     def set_frequency(self, frequency, bank, channel):
         super().set_frequency(frequency)
