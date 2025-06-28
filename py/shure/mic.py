@@ -59,22 +59,25 @@ class WirelessShureMic(WirelessMic):
             self.set_peak_flag()
 
     def set_battery(self, level):
-        if level == 'U':
-            level = 255
-        level = int(level)
-        self.battery = level
-
-        if 1 <= level <= 5:
-            self.prev_battery = level
+        status_list = [
+            None,
+            WirelessMicBatteryStatus.Critical,
+            WirelessMicBatteryStatus.Critical,
+            WirelessMicBatteryStatus.Replace,
+            WirelessMicBatteryStatus.Good,
+            WirelessMicBatteryStatus.Good
+        ]
+        if level in ['U', '255']:
+            self.battery = 0
+            if (time.time() - self.timestamp) < BATTERY_TIMEOUT:
+                self.battery_status = status_list[self.prev_battery]
+            else:
+                self.battery_status == WirelessMicBatteryStatus.Unknown
+        else:
+            self.battery = int(level)
+            self.battery_status = status_list[self.battery]
+            self.prev_battery = self.battery
             self.timestamp = time.time()
-
-        if (time.time() - self.timestamp) < BATTERY_TIMEOUT:
-            if 4 <= self.battery <= 5 or self.battery == 255 and 4 <= self.prev_battery <= 5:
-                self.battery_status = WirelessMicBatteryStatus.Good
-            elif self.battery == 3 or self.battery == 255 and self.prev_battery == 3:
-                self.battery_status = WirelessMicBatteryStatus.Replace
-            elif 0 <= self.battery <= 2 or self.battery == 255 and 0 <= self.prev_battery <= 2:
-                self.battery_status = WirelessMicBatteryStatus.Critical
 
     def set_power_lock(self, power_lock):
         if power_lock in ['OFF', 'UNKN', 'UNKNOWN', 'NONE']:
