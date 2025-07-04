@@ -1,8 +1,9 @@
 import logging
-import selectors
+import select
 import socket
 import struct
 import threading
+import time
 
 import ifaddr
 
@@ -14,7 +15,7 @@ class SennheiserMCPDiscovery:
 
     MCAST_GRP = '224.0.0.251'
     MCAST_PORT = 8133
-    WAIT_TIMEOUT = 2 # seconds
+    SLEEP_LENGTH = 0.5 # seconds
 
     # The following message, when transmitted to the above IP address and Port, causes receivers to
     # reveal themselves.
@@ -76,40 +77,55 @@ class SennheiserMCPDiscovery:
 
 
     def __init__(self):
-        self.socket = None
+        self.sockets = []
         self.thread = threading.Thread(target=self.discover)
 
-        # Local addresses to not transmit the discovery message from.
+        # Local addresses to not bind to.
         self.ignored_addrs = ['127.0.0.1']
 
+    def bind_listeners(self):
+        for adapter in ifaddr.get_adapters():
+            for addr in adapter.ips:
+                if not addr.is_IPv4 or addr.ip in self.ignored_addrs:
+                    continue
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                try:
+                    sock.bind((addr.ip, self.MCAST_PORT))
+                except OSError:
+                    logging.debug(
+                        "Unable to send Sennheiser MCP discovery message via "\
+                        "%s on '%s'.", addr.ip, adapter.nice_name
+                        )
+                    self.ignored_addrs.append(addr.ip)
+                else:
+                    logging.info(
+                        "Discovering Sennheiser MCP devices via %s on '%s'", \
+                        addr.ip, adapter.nice_name
+                    )
+                    self.sockets.append(sock)
+
     def discover(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(('', self.MCAST_PORT))
+        self.bind_listeners()
 
-        with selectors.DefaultSelector() as selector:
-            selector.register(self.socket, selectors.EVENT_READ)
-            while True:
-                for adapter in ifaddr.get_adapters():
-                    for addr in adapter.ips:
-                        if not addr.is_IPv4 or addr.ip in self.ignored_addrs:
-                            continue
-                        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-                            try:
-                                sock.bind((addr.ip, self.MCAST_PORT + 1))
-                            except OSError:
-                                logging.debug(
-                                    "Unable to send Sennheiser MCP discovery message via "\
-                                    "%s on '%s'.", addr.ip, adapter.nice_name
-                                    )
-                                self.ignored_addrs.append(addr.ip)
-                            else:
-                                sock.sendto(self.DISCOVERY_MSG, (self.MCAST_GRP, self.MCAST_PORT))
+        while True:
+            sockets = self.sockets
+            read_socks, write_socks, error_socks = select.select(sockets, sockets, sockets, .2)
 
-                while selector.select(self.WAIT_TIMEOUT):
-                    data, (ip4_addr, port) = self.socket.recvfrom(1024)
-                    if port != self.MCAST_PORT:
-                        continue
+            for tx in write_socks:
+                tx.sendto(self.DISCOVERY_MSG, (self.MCAST_GRP, self.MCAST_PORT))
+
+            for rx in read_socks:
+                try:
+                    data, (ip4_addr, _) = rx.recvfrom(1024)
+                except Exception as e:
+                    logging.error(e)
+                else:
                     self.process_discovery_packet(ip4_addr, data)
+
+            for sock in error_socks:
+                logging.error("Errored: ", sock)
+
+            time.sleep(self.SLEEP_LENGTH)
 
     def process_discovery_packet(self, ip4_addr, data):
         """
