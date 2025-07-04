@@ -77,8 +77,9 @@ class SennheiserMCPDiscovery(DeviceDiscovery):
 
 
     def __init__(self):
+        self.shutdown_requested = False
         self.sockets = []
-        self.thread = threading.Thread(target=self.discover)
+        self.thread = None
 
     def bind_listeners(self):
         for adapter in ifaddr.get_adapters():
@@ -101,10 +102,15 @@ class SennheiserMCPDiscovery(DeviceDiscovery):
                     ', '.join(bound_ips), adapter.nice_name
                 )
 
+    def close_listeners(self):
+        for sock in self.sockets:
+            sock.close()
+        self.sockets = []
+
     def discover(self):
         self.bind_listeners()
 
-        while True:
+        while not self.shutdown_requested:
             sockets = self.sockets
             read_socks, write_socks, error_socks = select.select(sockets, sockets, sockets, .2)
 
@@ -122,7 +128,11 @@ class SennheiserMCPDiscovery(DeviceDiscovery):
             for sock in error_socks:
                 logging.error("Errored: ", sock)
 
+            if self.shutdown_requested:
+                break
             time.sleep(self.SLEEP_LENGTH)
+
+        self.close_listeners()
 
     def process_discovery_packet(self, ip4_addr, data):
         """
@@ -157,7 +167,13 @@ class SennheiserMCPDiscovery(DeviceDiscovery):
         add_rx_to_dlist(ip4_addr, 'mcp_mic', model, 1)
 
     def start(self):
+        self.shutdown_requested = False
+        self.thread = threading.Thread(target=self.discover)
         self.thread.start()
 
     def stop(self):
-        self.thread.join()
+        self.shutdown_requested = True
+        while self.thread.is_alive():
+            self.thread.join(1)
+        logging.info('Stopped discovering Sennheiser MCP devices on all interfaces')
+        self.thread = None
