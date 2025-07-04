@@ -7,11 +7,11 @@ import time
 
 import ifaddr
 
-from discover import add_rx_to_dlist
+from discover import add_rx_to_dlist, DeviceDiscovery
 from sennheiser.mic_mcp import WirelessMCPMic
 
 
-class SennheiserMCPDiscovery:
+class SennheiserMCPDiscovery(DeviceDiscovery):
 
     MCAST_GRP = '224.0.0.251'
     MCAST_PORT = 8133
@@ -80,29 +80,26 @@ class SennheiserMCPDiscovery:
         self.sockets = []
         self.thread = threading.Thread(target=self.discover)
 
-        # Local addresses to not bind to.
-        self.ignored_addrs = ['127.0.0.1']
-
     def bind_listeners(self):
         for adapter in ifaddr.get_adapters():
+            bound_ips = []
             for addr in adapter.ips:
-                if not addr.is_IPv4 or addr.ip in self.ignored_addrs:
+                if not addr.is_IPv4 or self.is_ignored_address(addr.ip):
                     continue
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 try:
                     sock.bind((addr.ip, self.MCAST_PORT))
-                except OSError:
-                    logging.debug(
-                        "Unable to send Sennheiser MCP discovery message via "\
-                        "%s on '%s'.", addr.ip, adapter.nice_name
-                        )
-                    self.ignored_addrs.append(addr.ip)
+                except OSError as error:
+                    self.handle_binding_error(error, adapter, addr)
                 else:
-                    logging.info(
-                        "Discovering Sennheiser MCP devices via %s on '%s'", \
-                        addr.ip, adapter.nice_name
-                    )
+                    bound_ips.append(addr.ip)
                     self.sockets.append(sock)
+
+            if bound_ips:
+                logging.info(
+                    "Discovering Sennheiser MCP devices via %s on '%s'", \
+                    ', '.join(bound_ips), adapter.nice_name
+                )
 
     def discover(self):
         self.bind_listeners()

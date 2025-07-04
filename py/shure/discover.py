@@ -12,11 +12,11 @@ import time
 import ifaddr
 
 import config
-from discover import add_rx_to_dlist
+from discover import add_rx_to_dlist, DeviceDiscovery
 from shure.networkdevice import ShureNetworkDevice
 
 
-class ShureDiscovery:
+class ShureDiscovery(DeviceDiscovery):
 
     DCID_JSON_FILE = config.app_dir('dcid.json')
     IGNORED_FCTN = ('ACNPROXY', 'WWB6')
@@ -28,7 +28,6 @@ class ShureDiscovery:
     def __init__(self, discover_callback=None):
         self.dcid_definitions = None
         self.discover_callback = discover_callback or self.process_discovery_packet
-        self.ignored_addrs = ['127.0.0.1'] # Local addresses to not bind to
         self.last_keepalive_sent = -self.WINDOWS_KEEPALIVE_TIMEOUT
         self.listener_sockets = []
         self.thread = threading.Thread(target=self.discover)
@@ -41,39 +40,37 @@ class ShureDiscovery:
         bind to it may throw an exception.)
         '''
         for adapter in ifaddr.get_adapters():
+            bound_ips = []
             for addr in adapter.ips:
-                if not addr.is_IPv4 or addr.ip in self.ignored_addrs:
+                if not addr.is_IPv4 or self.is_ignored_address(addr.ip):
                     continue
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-                # On Windows, one binds to the local address on the interface;
-                # On *nix systems, one binds to the Multicast group address.
-                if platform.system() == "Windows":
-                    try:
+                try:
+                    # On Windows, one binds to the local address on the interface;
+                    if platform.system() == "Windows":
                         sock.bind((addr.ip, self.MCAST_PORT))
-                    except OSError as error:
-                        if error.errno == 10049 and addr.ip.startswith("169.254."):
-                            # Windows (10) assigns a link-local address to unconnected adapters,
-                            # despite them bring, y'know, *not connected* to anything.
-                            logging.debug(
-                                "Skipping unbindable address %s on unconnected interface '%s' (aka '%s')",
-                                addr.ip, adapter.nice_name, addr.nice_name
-                            )
-                            self.ignored_addrs.append(addr.ip)
-                            continue
-                        raise error
-                else:
-                    sock.bind((self.MCAST_GRP, self.MCAST_PORT))
+
+                    # On *nix systems, one binds to the Multicast group address.
+                    else:
+                        sock.bind((self.MCAST_GRP, self.MCAST_PORT))
+
+                except OSError as error:
+                    self.handle_binding_error(error, adapter, addr)
+                    continue
 
                 mreq = struct.pack("4s4s", socket.inet_aton(self.MCAST_GRP), socket.inet_aton(addr.ip))
                 sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
-                logging.debug(
-                    "Discovering Shure devices via %s on '%s",
-                    addr.ip, adapter.nice_name
-                )
+                bound_ips.append(addr.ip)
                 self.listener_sockets.append(sock)
+
+            if bound_ips:
+                logging.info(
+                    "Listening for Shure discovery messages via %s on %s", \
+                    ', '.join(bound_ips), adapter.nice_name
+                )
 
     def build_service_request_message(self):
         scope = b'DEFAULT'
