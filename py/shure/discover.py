@@ -1,11 +1,13 @@
 import json
 import logging
 import platform
+import random
 import re
 import select
 import socket
 import struct
 import threading
+import time
 
 import ifaddr
 
@@ -19,11 +21,14 @@ class ShureDiscovery:
     DCID_JSON_FILE = config.app_dir('dcid.json')
     MCAST_GRP = '239.255.254.253'
     MCAST_PORT = 8427
+    WINDOWS_KEEPALIVE_TIMEOUT = 30 # seconds
+
 
     def __init__(self, discover_callback=None):
         self.dcid_definitions = None
         self.discover_callback = discover_callback or self.process_discovery_packet
         self.ignored_addrs = ['127.0.0.1'] # Local addresses to not bind to
+        self.last_keepalive_sent = -self.WINDOWS_KEEPALIVE_TIMEOUT
         self.listener_sockets = []
         self.thread = threading.Thread(target=self.discover)
 
@@ -69,21 +74,65 @@ class ShureDiscovery:
                 )
                 self.listener_sockets.append(sock)
 
+    def build_service_request_message(self):
+        scope = b'DEFAULT'
+        service_type = b'acn.esta'
+        xid = random.randint(1, 65535)
+        message = (
+            b'\x02',                       # SLP version
+            b'\x01',                       # function_id (SrvRqst in this case)
+            b'\x00\x00\x00',               # message length (populated below)
+            (0x00|0x00|0x20).to_bytes(1),  # Overflow/Fresh/Request-multicast flags
+            b'\x00',                       # reserved
+            b'\x00\x00\x00',               # next extension offset
+            xid.to_bytes(2),               # xid
+            b'\x00\x02',                   # language tag length
+            b'en',                         # language tag
+            len(b'').to_bytes(2),          # length of list of Previous Responders
+            b'',                           # comma-separated list of Previous Responders
+            len(service_type).to_bytes(2),
+            service_type,
+            len(scope).to_bytes(2),        # length of list of scope names
+            scope,                         # comma-separated list of scope names
+            len(b'').to_bytes(2),          # length of predicate string
+            b'',                           # predicate string
+            len(b'').to_bytes(2),          # length of SLP SPI string
+            b'',                           # SLP SPI string
+        )
+        message = b''.join(message)
+        return message[:2] + len(message).to_bytes(3) + message[5:]
+
     def discover(self):
         self.bind_listeners()
 
-        if platform.system() != "Windows":
-            # On *nix systems, although all the sockets are bound to different *local* addresses, 
-            # they're all bound to the same *multicast* address. Thus, they all receive the same
-            # message(s) at the same time, so we only need to `select` on one of them.
-            socks = [self.listener_sockets[0]]
-        else:
-            # As to Windows, I need to check if we need to listen to all the sockets, or just
-            # the first one as above.
+        system = platform.system()
+        if system == "Windows":
+            # On Windows messages only "appear" on the socket they arrive on...
             socks = self.listener_sockets
+        else:
+            # ...but on *nix systems all messages "appear" on all our listening sockets.
+            #
+            # This is possibly because whilst they're all assigned to different interfaces, they're
+            # all bound to the same address.
+            #
+            # Whatever the reason, we only need to `select.select()` one of the sockets.
+            socks = [self.listener_sockets[0]]
 
         while True:
-            read_socks, _, error_socks = select.select(socks, [], socks, .2)
+            read_socks, write_socks, error_socks = select.select(socks, socks, socks, .2)
+
+            if system == "Windows":
+                # From experimentation, it appears that on Windows we can only *receive* messages
+                # from a multicast group if we've recently *sent* a message to the group. It does
+                # not matter what we send, but it makes sense for it to be an SLPv2 message.
+                #
+                # Thus, we send a "Service Request" message - ordinarily used to find providers of
+                # a specific service on the network. We don't expect a response.
+                now = int(time.perf_counter())
+                if now - self.last_keepalive_sent > self.WINDOWS_KEEPALIVE_TIMEOUT:
+                    for tx in write_socks:
+                        tx.sendto(self.build_service_request_message(), (self.MCAST_GRP, self.MCAST_PORT))
+                    self.last_keepalive_sent = now
 
             for rx in read_socks:
                 try:
@@ -112,7 +161,6 @@ class ShureDiscovery:
         if message[1] != 7:
             # Function-ID
             #   If not `7` ("Attribute Reply"), then it doesn't contain what we're looking for
-            logging.debug('Received SLP message with function-id %s\n(%s)', message[1], message)
             return [], {}
 
         # Find the end of the common SLP message header
