@@ -1,0 +1,6 @@
+
+node_modules/*
+static/fonts/*
+static/*.js*
+
+__pycache__
