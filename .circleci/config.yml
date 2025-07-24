@@ -17,6 +17,11 @@ jobs:
     - checkout
     
     - run:
+        name: Checkout Dockerfile
+        command: |
+          git checkout docker Dockerfile
+    
+    - run:
         name: Build Docker Image
         command: |
           docker image build -t micboard .
