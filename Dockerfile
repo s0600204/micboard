@@ -3,7 +3,7 @@ FROM node:24-bookworm-slim AS micboard_frontend
 WORKDIR /home/node/app
 
 # Install node deps
-COPY package.json package.json
+COPY package.json webpack.config.js ./
 RUN npm install --omit=dev
 
 COPY css js ./
