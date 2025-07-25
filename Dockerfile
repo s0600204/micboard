@@ -6,7 +6,9 @@ WORKDIR /home/node/app
 COPY package.json webpack.config.js ./
 RUN npm install --omit=dev
 
-COPY css js ./
+COPY css css
+COPY js js
+COPY static static
 
 RUN npm run build
 
@@ -19,8 +21,9 @@ WORKDIR /usr/src/app
 COPY py/requirements.txt py/requirements.txt
 RUN pip3 install -r py/requirements.txt
 
-COPY *.html *.json py ./
-COPY --from=micboard_frontend /home/node/app/static ./
+COPY *.html *.json ./
+COPY py py
+COPY --from=micboard_frontend /home/node/app/static ./static
 
 EXPOSE 8058
 CMD ["python3", "py/micboard.py"]
