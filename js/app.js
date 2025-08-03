@@ -14,8 +14,14 @@ import { setBackground, setInfoDrawer } from './display.js';
 import { setTimeMode } from './chart-smoothie.js';
 import { initConfigEditor } from './config.js';
 
-import '../css/colors.scss';
-import '../css/style.scss';
+import "@fontsource/ibm-plex-mono/100-italic.css";
+import "@fontsource/ibm-plex-sans/300.css";
+import "@fontsource/ibm-plex-sans/300-italic.css";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/600.css";
+
+import '../css/colors.css';
+import '../css/style.css';
 
 
 export const dataURL = 'data.json';

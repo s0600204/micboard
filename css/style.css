@@ -1,17 +1,3 @@
-@use "node_modules/@fontsource/ibm-plex-mono/scss/mixins" as PlexMono;
-@use "node_modules/@fontsource/ibm-plex-sans/scss/mixins" as PlexSans;
-
-@include PlexMono.faces(
-  $subsets: all,
-  $weights: 100,
-  $styles: all
-);
-@include PlexSans.faces(
-  $subsets: all,
-  $weights: (300, 400, 600),
-  $styles: all
-);
-
 
 html,body {
   background-color: var(--color-background);
@@ -29,8 +15,8 @@ html,body {
   color: var(--color-white);
   border: 0px;
   position: relative;
-  // flex-grow: unset;
-  // background-color: var(--color-black);
+  /* flex-grow: unset; */
+  /* background-color: var(--color-black); */
 }
 
 #micboard {
@@ -44,9 +30,9 @@ html,body {
 
 .deskmode #micboard .col-sm {
   /* remove for borderless */
-  // border-color: var(--color-background);
+  /* border-color: var(--color-background); */
   border-style: solid;
-  // border-width: 0 8px;
+  /* border-width: 0 8px; */
 }
 
 .mic_id {
@@ -62,7 +48,7 @@ html,body {
 
 
 .above-mid .col-sm {
-  // border-color: var(--color-background);
+  /* border-color: var(--color-background); */
   padding: 0px;
 }
 
@@ -162,18 +148,18 @@ canvas.slotgraph {
   position: absolute;
   bottom: 15px;
   left: 5px;
-  // color: #587B7F;
+  /* color: #587B7F; */
   color: #DA8F4A;
-  // color: var(--color-yellow-dark);
+  /* color: var(--color-yellow-dark); */
 }
 
 .quality {
   position: absolute;
   bottom: 80px;
   left: 5px;
-  // font-family: 'IBM Plex Mono';
-  // font-weight: 100;
-  // font-style: italic;
+  /* font-family: 'IBM Plex Mono'; */
+  /* font-weight: 100; */
+  /* font-style: italic; */
   color: var(--color-purple);
 }
 
@@ -267,10 +253,10 @@ canvas.slotgraph {
 }
 
 #save-box {
-  // height: 130px;
+  /* height: 130px; */
   width: 100%;
-  // position: absolute;
-  // bottom: 15px;
+  /* position: absolute; */
+  /* bottom: 15px; */
   display: block;
 }
 
@@ -552,9 +538,9 @@ canvas.slotgraph {
 @media (min-width: 513px) {
 
   .deskmode #micboard .col-sm {
-    // margin-bottom: 15px;
-    // border-width: 0 8px
-    // margin: 8px;
+    /* margin-bottom: 15px; */
+    /* border-width: 0 8px */
+    /* margin: 8px; */
   }
 
   .deskmode #micboard .col-sm .mic_name {
@@ -625,7 +611,7 @@ canvas.slotgraph {
 }
 
 .blank .info-drawer {
-  // background-color: black;
+  /* background-color: black; */
 }
 
 .blank .electrode, .blank .info-drawer {
@@ -683,11 +669,11 @@ canvas.slotgraph {
 
 .settings {
   display: none;
-  // background-color: var(--color-blue);
+  /* background-color: var(--color-blue); */
   color: var(--color-black);
-  // margin-left: -15px;
-  // margin-right: -15px;
-  // padding: 3em;
+  /* margin-left: -15px; */
+  /* margin-right: -15px; */
+  /* padding: 3em; */
   padding-top: 76px;
 }
 
@@ -695,8 +681,8 @@ canvas.slotgraph {
   background-color: var(--color-black);
   padding: .75rem 1.25rem;
   border: 1px solid var(--color-gray);
-  // margin-left: -5px;
-  // margin-right: -5px;
+  /* margin-left: -5px; */
+  /* margin-right: -5px; */
   border-radius: 12px 12px 0 0;
 }
 
@@ -709,8 +695,8 @@ canvas.slotgraph {
   background-color: var(--color-black);
   padding: .75rem 1.25rem;
   border: 1px solid var(--color-gray);
-  // margin-left: -5px;
-  // margin-right: -5px;
+  /* margin-left: -5px; */
+  /* margin-right: -5px; */
   border-radius: 0 0 12px 12px;
 }
 
@@ -812,7 +798,7 @@ a:link, a:visited, a:hover, a:active {
   padding-top: 38px;
   background-color: var(--color-gray);
   overflow-x: hidden;
-  // transition: .5s;
+  /* transition: .5s; */
 }
 
 .row {
@@ -836,7 +822,7 @@ a:link, a:visited, a:hover, a:active {
 
 #eslotlist {
   height: 400px;
-  // overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 #eslotlist .col-sm {
@@ -880,7 +866,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 #hud {
-  // display: none;
+  /* display: none; */
   position: absolute;
   right: 25px;
   bottom: 25px;
