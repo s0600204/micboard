@@ -22,10 +22,12 @@ def file_list(extension):
             files.append(file)
     return files
 
-# Its not efficecent to get the IP each time, but for now we'll assume server might have dynamic IP
-def localURL():
+# Its not efficient to get the IP each time, but for now we'll assume server might have dynamic IP
+def localURL(http_request=None):
     if 'local_url' in config.config_tree:
         return config.config_tree['local_url']
+    if http_request:
+        return f'{http_request.protocol}://{http_request.host}{os.path.dirname(http_request.path[1:])}'
     try:
         ip = socket.gethostbyname(socket.gethostname())
         return 'http://{}:{}'.format(ip, config.config_tree['port'])
@@ -33,7 +35,7 @@ def localURL():
         return 'https://micboard.io'
     return 'https://micboard.io'
 
-def micboard_json(network_devices):
+def micboard_json(network_devices, http_request):
     offline_devices = offline.offline_json()
     data = []
     discovered = []
@@ -46,7 +48,7 @@ def micboard_json(network_devices):
     gifs = file_list('.gif')
     jpgs = file_list('.jpg')
     mp4s = file_list('.mp4')
-    url = localURL()
+    url = localURL(http_request)
 
     for device in discover.time_filterd_discovered_list():
         discovered.append(device)
@@ -67,7 +69,7 @@ class AboutHandler(web.RequestHandler):
 class JsonHandler(web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        self.write(micboard_json(device_manager.NetworkDevices))
+        self.write(micboard_json(device_manager.NetworkDevices, self.request))
 
 class SocketHandler(websocket.WebSocketHandler):
     clients = set()
