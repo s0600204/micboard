@@ -8,6 +8,7 @@ import tornado_server
 import device_manager
 from sennheiser.discover import SennheiserMCPDiscovery
 from shure.discover import ShureDiscovery
+from shure.discover_uhfr import ShureUHFRDiscovery
 
 
 def main():
@@ -23,12 +24,14 @@ def main():
 
     sennheiser_mcp_discovery = SennheiserMCPDiscovery()
     shure_discovery = ShureDiscovery()
+    shure_uhfr_discovery = ShureUHFRDiscovery()
 
     rxquery_t.start()
     rxcom_t.start()
     web_t.start()
     sennheiser_mcp_discovery.start()
     shure_discovery.start()
+    shure_uhfr_discovery.start()
     rxparse_t.start()
 
 
