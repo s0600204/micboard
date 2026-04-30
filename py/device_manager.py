@@ -7,6 +7,8 @@ import logging
 
 
 from channel import chart_update_list, data_update_list
+from iem import WirelessIEM
+from mic import WirelessMic
 from shure.networkdevice import ShureNetworkDevice
 
 
@@ -34,6 +36,26 @@ def check_add_network_device(manufacturer, ip, type):
         logging.critical(f"Unrecognised Device manufacturer {manufacturer}")
     NetworkDevices.append(net)
     return net
+
+def get_supported_device_models():
+    models = {
+        'all': [],
+        'mic': [],
+        'iem': [],
+    }
+
+    for devtype, devclass in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
+        if issubclass(devclass, WirelessIEM):
+            models['iem'].append(devtype)
+        elif issubclass(devclass, WirelessMic):
+            models['mic'].append(devtype)
+
+    models['all'] = models['mic'] + models['iem']
+
+    models['all'].sort()
+    models['mic'].sort()
+    models['iem'].sort()
+    return models
 
 def watchdog_monitor():
     for rx in (rx for rx in NetworkDevices if rx.rx_com_status == 'CONNECTED'):
