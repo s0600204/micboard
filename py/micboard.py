@@ -6,7 +6,8 @@ import time
 import config
 import tornado_server
 import device_manager
-from sennheiser.discover import SennheiserMCPDiscovery
+from sennheiser.discover_mcp import SennheiserMCPDiscovery
+from sennheiser.discover_ssc import SennheiserSSCDiscovery
 from shure.discover import ShureDiscovery
 
 
@@ -22,12 +23,14 @@ def main():
     rxparse_t = threading.Thread(target=device_manager.ProcessRXMessageQueue)
 
     sennheiser_mcp_discovery = SennheiserMCPDiscovery()
+    sennheiser_ssc_discovery = SennheiserSSCDiscovery()
     shure_discovery = ShureDiscovery()
 
     rxquery_t.start()
     rxcom_t.start()
     web_t.start()
     sennheiser_mcp_discovery.start()
+    sennheiser_ssc_discovery.start()
     shure_discovery.start()
     rxparse_t.start()
 

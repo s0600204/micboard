@@ -1,17 +1,18 @@
+import json
+
 from channel import chart_update_list, data_update_list
 from networkdevice import NetworkDevice
 from util import NetworkProtocol
 
 from sennheiser.mic_mcp import WirelessMCPMic
+from sennheiser.mic_ewdx import WirelessEWDXMic
 
 
 # Sennheiser receivers (broadly) use one of two protocols:
 #
 # * Media Control Protocol (MCP)
-# * Sennheiser Sound Control Protocol (SSCP)
-#
-# For now, we only support the former.
-class SennheiserNetworkDevice(NetworkDevice):
+# * Sennheiser Sound Control Protocol (SSC)
+class SennheiserMCPNetworkDevice(NetworkDevice):
 
     PORT = 53212
     ENCODING = 'ascii'
@@ -43,3 +44,52 @@ class SennheiserNetworkDevice(NetworkDevice):
         if 64 < payload[0] < 91:
             return str(payload, self.ENCODING).split('\r')
         return []
+
+
+class SennheiserSSCNetworkDevice(NetworkDevice):
+
+    PORT = 45
+    DEVICE_CLASS_MAP = {
+        'ewdx_mic': WirelessEWDXMic,
+    }
+    NETWORK_PROTOCOL = NetworkProtocol.UDP
+    # ~ NETWORK_SHARED_PORT = True
+
+    def parse_raw_rx(self, data: tuple):
+        osc_path, osc_value = data
+
+        ch_pos = None
+        if osc_path.startswith('/rx'):
+            ch_pos = 3
+        elif osc_path.startswith('/m/rx'):
+            ch_pos = 5
+        elif osc_path.startswith('/mates/tx'):
+            ch_pos = 9
+
+        if ch_pos:
+            ch_pos_to = osc_path.index('/', ch_pos)
+            ch = get_device_by_channel(osc_path[ch_pos:ch_pos_to])
+            osc_path = osc_path[:ch_pos] + osc_path[ch_pos_to:]
+            ch.parse_report(osc_path, osc_value)
+
+
+    def split_raw_rx(self, data: str):
+        try:
+            py_repr = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            return []
+
+        breadcrumbs = []
+        lines = []
+
+        def walk(node):
+            for key, value in node.items():
+                breadcrumbs.append(key)
+                if isinstance(value, dict):
+                    walk(value)
+                else:
+                    lines.append((f"/{ '/'.join(breadcrumbs) }", value))
+                breadcrumbs.pop()
+
+        walk(py_repr)
+        return lines

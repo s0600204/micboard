@@ -46,7 +46,7 @@ class ChannelDevice:
         return None
 
     def set_frequency(self, frequency):
-        self.frequency = frequency[:3] + '.' + frequency[3:]
+        self.frequency = frequency[:-3] + '.' + frequency[-3:]
 
     def set_chan_name_raw(self, *chan_name):
         chan_name = ' '.join(chan_name)

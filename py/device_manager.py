@@ -10,13 +10,17 @@ import logging
 from channel import chart_update_list, data_update_list
 from iem import WirelessIEM
 from mic import WirelessMic
-from sennheiser.networkdevice import SennheiserNetworkDevice
+from sennheiser.networkdevice import (
+    SennheiserMCPNetworkDevice,
+    SennheiserSSCNetworkDevice,
+)
 from shure.networkdevice import ShureNetworkDevice, ShureNetworkUDPDevice
 from util import WIRELESS_QUERY_QUEUE_INTERVAL
 
 
 NETWORK_DEVICE_CLASSES = [
-    SennheiserNetworkDevice,
+    SennheiserMCPNetworkDevice,
+    SennheiserSSCNetworkDevice,
     ShureNetworkDevice,
     ShureNetworkUDPDevice,
 ]
