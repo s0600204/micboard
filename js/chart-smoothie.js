@@ -34,10 +34,14 @@ export function updateChart(data) {
 
     if (micboard.MIC_MODELS.indexOf(data.type) > -1) {
       charts[data.slot].audioSeries.append(timestamp, data.audio_level + 100);
-      charts[data.slot].rfSeries.append(timestamp, data.rf_level);
+
+      for (let idx = 0; idx < data.rf_levels.length; ++idx) {
+        charts[data.slot].rfSeries[idx].append(timestamp, data.rf_levels[idx])
+      }
 
       micboard.transmitters[data.slot].audio_level = data.audio_level;
-      micboard.transmitters[data.slot].rf_level = data.rf_level;
+      micboard.transmitters[data.slot].rf_levels = data.rf_levels;
+
     } else if (micboard.IEM_MODELS.indexOf(data.type) > -1) {
       charts[data.slot].audioLSeries.append(timestamp, data.audio_level_l + 100);
       charts[data.slot].audioRSeries.append(timestamp, data.audio_level_r);
@@ -75,18 +79,23 @@ export function initChart(slotSelector, data) {
 
   if (micboard.MIC_MODELS.indexOf(data.type) > -1) {
     chart.audioSeries = new TimeSeries();
-    chart.rfSeries = new TimeSeries();
     chart.slotChart.addTimeSeries(chart.audioSeries, {
       strokeStyle: '#69B578',
       fillStyle: '',
       lineWidth: 2,
     });
 
-    chart.slotChart.addTimeSeries(chart.rfSeries, {
-      strokeStyle: '#DC493A',
-      fillStyle: '',
-      lineWidth: 2,
-    });
+    chart.rfSeries = []
+    for (let idx = 0; idx < data.rf_levels.length; ++idx)
+    {
+      chart.rfSeries[idx] = new TimeSeries();
+      chart.slotChart.addTimeSeries(chart.rfSeries[idx], {
+        strokeStyle: '#DC493A',
+        fillStyle: '',
+        lineWidth: 2,
+      });
+    }
+
   } else if (micboard.IEM_MODELS.indexOf(data.type) > -1) {
     chart.audioLSeries = new TimeSeries();
     chart.audioRSeries = new TimeSeries();

@@ -3,7 +3,6 @@
 import { Collapse } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
-import 'whatwg-fetch';
 
 import { autoRandom, seedTransmitters } from './demodata.js';
 import { renderGroup, renderDisplayList, updateSlot } from './channelview.js';
@@ -15,16 +14,23 @@ import { setBackground, setInfoDrawer } from './display.js';
 import { setTimeMode } from './chart-smoothie.js';
 import { initConfigEditor } from './config.js';
 
-import '../css/colors.scss';
-import '../css/style.scss';
-import '../node_modules/@ibm/plex/scss/ibm-plex.scss';
+import "@fontsource/ibm-plex-mono/100-italic.css";
+import "@fontsource/ibm-plex-sans/300.css";
+import "@fontsource/ibm-plex-sans/300-italic.css";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/600.css";
+
+import '../css/colors.css';
+import '../css/style.css';
 
 
 export const dataURL = 'data.json';
 
 export const micboard = [];
-micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd'];
-micboard.IEM_MODELS = ['p10t'];
+micboard.ALL_MODELS = [];
+micboard.MIC_MODELS = [];
+micboard.IEM_MODELS = [];
+micboard.MODEL_INFO = {};
 micboard.url = [];
 micboard.displayMode = 'deskmode';
 micboard.infoDrawerMode = 'elinfo11';
@@ -232,6 +238,10 @@ function initialMap(callback) {
         micboard.localURL = data.url;
         micboard.groups = groupTableBuilder(data);
         micboard.config = data.config;
+        micboard.ALL_MODELS = data.models.all;
+        micboard.IEM_MODELS = data.models.iem;
+        micboard.MIC_MODELS = data.models.mic;
+        micboard.MODEL_INFO = data.model_info;
         mapGroups();
 
         if (micboard.config.slots.length < 1) {

@@ -5,8 +5,8 @@ import time
 
 import config
 import tornado_server
-import shure
-import discover
+import device_manager
+from shure.discover import ShureDiscovery
 
 
 def main():
@@ -15,16 +15,17 @@ def main():
     logging.info(f'Starting Micboard {version}')
 
     time.sleep(.1)
-    rxquery_t = threading.Thread(target=shure.WirelessQueryQueue)
-    rxcom_t = threading.Thread(target=shure.SocketService)
+    rxquery_t = threading.Thread(target=device_manager.WirelessQueryQueue)
+    rxcom_t = threading.Thread(target=device_manager.SocketService)
     web_t = threading.Thread(target=tornado_server.twisted)
-    discover_t = threading.Thread(target=discover.discover)
-    rxparse_t = threading.Thread(target=shure.ProcessRXMessageQueue)
+    rxparse_t = threading.Thread(target=device_manager.ProcessRXMessageQueue)
+
+    shure_discovery = ShureDiscovery()
 
     rxquery_t.start()
     rxcom_t.start()
     web_t.start()
-    discover_t.start()
+    shure_discovery.start()
     rxparse_t.start()
 
 

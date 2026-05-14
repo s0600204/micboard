@@ -5,14 +5,28 @@ import { Sortable, Plugins } from '@shopify/draggable';
 import { micboard, updateHash } from './app.js';
 import { postJSON } from './data.js';
 
-const NET_DEVICE_TYPES = ['axtd', 'ulxd', 'qlxd', 'uhfr', 'p10t'];
+const TYPE_SEPARATOR = '__';
+const OFFLINE_TYPE_VALUE = 'offline';
+
+function buildTypeValue(data) {
+  if (data.type == OFFLINE_TYPE_VALUE)
+    return data.type;
+  return data.type + TYPE_SEPARATOR + data.model;
+}
+
+function splitTypeValue(value) {
+  return value.split(TYPE_SEPARATOR);
+}
 
 function updateEditEntry(slotSelector, data) {
   if (data.ip) {
     slotSelector.querySelector('.cfg-ip').value = data.ip;
   }
-  slotSelector.querySelector('.cfg-type').value = data.type;
-  slotSelector.querySelector('.cfg-channel').value = data.channel;
+  slotSelector.querySelector('.cfg-type').value = buildTypeValue(data);
+
+  const channelInput = slotSelector.querySelector('.cfg-channel');
+  updateChannelCount(channelInput, data.type, data.model);
+  channelInput.value = data.channel;
   console.log(data);
 }
 
@@ -73,6 +87,7 @@ function renderSlotList() {
     t = document.getElementById('config-slot-template').content.cloneNode(true);
     t.querySelector('label').innerHTML = 'slot ' + i;
     t.querySelector('.cfg-row').id = 'editslot-' + i;
+    populateTypeSelect(t.querySelector('.cfg-type'));
     document.getElementById('editor_holder').append(t);
   }
 
@@ -107,6 +122,7 @@ function renderDiscoverdDeviceList() {
       e.channel = i;
       if (discoverFilter(e, currentSlotList)) {
         t = document.getElementById('config-slot-template').content.cloneNode(true);
+        populateTypeSelect(t.querySelector('.cfg-type'));
         updateEditEntry(t, e);
         document.getElementById('discovered_list').append(t);
       }
@@ -124,9 +140,9 @@ function generateJSONConfig() {
       const output = {};
 
       output.slot = slot;
-      output.type = configBoard[i].querySelector('.cfg-type').value;
+      [output.type, output.model] = splitTypeValue(configBoard[i].querySelector('.cfg-type').value);
 
-      if (NET_DEVICE_TYPES.indexOf(output.type) > -1) {
+      if (micboard.ALL_MODELS.includes(output.type)) {
         output.ip = configBoard[i].querySelector('.cfg-ip').value;
         output.channel = parseInt(configBoard[i].querySelector('.cfg-channel').value, 10);
       }
@@ -161,8 +177,48 @@ function updateHiddenSlots() {
     } else {
       e.querySelector('.cfg-ip').style.display = "block"
       e.querySelector('.cfg-channel').style.display = "block"
+      updateChannelCount(e.querySelector('.cfg-channel'), ...splitTypeValue(type));
     }
   })
+}
+
+function updateChannelCount(channelDOM, type, model) {
+  const previousValue = channelDOM.value;
+  const channelLimit = micboard.MODEL_INFO[type].models[model].channels;
+  while (channelDOM.firstChild)
+    channelDOM.removeChild(channelDOM.firstChild);
+
+  for (let chan = 0; chan < channelLimit; ++chan) {
+    const channelOption = document.createElement('option');
+    channelOption.text = chan + 1;
+    channelDOM.appendChild(channelOption);
+  }
+  channelDOM.value = Math.min(Math.max(1, previousValue), channelLimit);
+}
+
+function populateTypeSelect(selectDOM) {
+  selectDOM.appendChild(document.createElement('option'));
+
+  for (let type in micboard.MODEL_INFO) {
+    const typeInfo = micboard.MODEL_INFO[type];
+    const group = document.createElement('optgroup');
+    group.label = typeInfo.name;
+
+    for (let model in typeInfo.models) {
+      const modelInfo = typeInfo.models[model];
+      const option = document.createElement('option');
+      option.value = [type, model].join(TYPE_SEPARATOR);
+      option.innerHTML = modelInfo.name;
+      group.appendChild(option);
+    }
+
+    selectDOM.appendChild(group);
+  }
+
+  const offlineOption = document.createElement('option');
+  offlineOption.text = 'Offline'; // @todo: l10n
+  offlineOption.value = 'offline';
+  selectDOM.appendChild(offlineOption);
 }
 
 export function initConfigEditor() {
@@ -220,6 +276,7 @@ export function initConfigEditor() {
     let t;
     for (let i = 0; i < 4; i += 1) {
       t = document.getElementById('config-slot-template').content.cloneNode(true);
+      populateTypeSelect(t.querySelector('.cfg-type'));
       document.getElementById('editor_holder').append(t);
     }
     updateSlotID();

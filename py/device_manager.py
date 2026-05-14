@@ -5,10 +5,17 @@ import atexit
 import sys
 import logging
 
-from networkdevice import ShureNetworkDevice
+
 from channel import chart_update_list, data_update_list
-# from mic import WirelessMic
-# from iem import IEM
+from iem import WirelessIEM
+from mic import WirelessMic
+from shure.networkdevice import ShureNetworkDevice, ShureNetworkUDPDevice
+
+
+NETWORK_DEVICE_CLASSES = [
+    ShureNetworkDevice,
+    ShureNetworkUDPDevice,
+]
 
 NetworkDevices = []
 DeviceMessageQueue = queue.Queue()
@@ -28,9 +35,72 @@ def check_add_network_device(ip, type):
     if net:
         return net
 
-    net = ShureNetworkDevice(ip, type)
-    NetworkDevices.append(net)
-    return net
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        if type in net_device_class.DEVICE_CLASS_MAP:
+            net = net_device_class(ip, type)
+            NetworkDevices.append(net)
+            return net
+
+    logging.critical(f"Unrecognised Device type {type}")
+    return None
+
+def get_supported_device_model_info():
+    device_info = {}
+
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        for device_type, device_class in net_device_class.DEVICE_CLASS_MAP.items():
+            device_info[device_type] = {
+                'name': device_class.NAME,
+                'models': {},
+            }
+            models = getattr(device_class, 'MODELS', {}).items()
+            for model_id, model_definition in models:
+                device_info[device_type]['models'][model_id] = {
+                    'name': model_definition.get('name', model_id),
+                    'channels': model_definition['channels'],
+                }
+    return device_info
+
+def get_supported_device_model_types():
+    models = {
+        'all': [],
+        'mic': [],
+        'iem': [],
+    }
+
+    for net_device_class in NETWORK_DEVICE_CLASSES:
+        for devtype, devclass in net_device_class.DEVICE_CLASS_MAP.items():
+            if issubclass(devclass, WirelessIEM):
+                models['iem'].append(devtype)
+            elif issubclass(devclass, WirelessMic):
+                models['mic'].append(devtype)
+
+    models['all'] = models['mic'] + models['iem']
+
+    models['all'].sort()
+    models['mic'].sort()
+    models['iem'].sort()
+    return models
+
+def get_supported_device_models():
+    models = {
+        'all': [],
+        'mic': [],
+        'iem': [],
+    }
+
+    for devtype, devclass in ShureNetworkDevice.DEVICE_CLASS_MAP.items():
+        if issubclass(devclass, WirelessIEM):
+            models['iem'].append(devtype)
+        elif issubclass(devclass, WirelessMic):
+            models['mic'].append(devtype)
+
+    models['all'] = models['mic'] + models['iem']
+
+    models['all'].sort()
+    models['mic'].sort()
+    models['iem'].sort()
+    return models
 
 def watchdog_monitor():
     for rx in (rx for rx in NetworkDevices if rx.rx_com_status == 'CONNECTED'):
@@ -74,19 +144,12 @@ def SocketService():
 
         for rx in read_socks:
             try:
-                data = rx.f.recv(1024).decode('UTF-8')
+                data = rx.f.recv(1024)
             except:
                 rx.socket_disconnect()
                 break
-            # print("read: {} data: {}".format(rx.ip,data))
 
-            d = '>'
-            if rx.type == 'uhfr':
-                d = '*'
-            data = [e+d for e in data.split(d) if e]
-
-            for line in data:
-                # rx.parse_raw_rx(line)
+            for line in rx.split_raw_rx(data):
                 DeviceMessageQueue.put((rx, line))
 
             rx.socket_watchdog = int(time.perf_counter())
@@ -97,10 +160,7 @@ def SocketService():
             string = rx.writeQueue.get()
             logging.debug("write: %s data: %s", rx.ip, string)
             try:
-                if rx.type in ['qlxd', 'ulxd', 'axtd', 'p10t']:
-                    rx.f.sendall(bytearray(string, 'UTF-8'))
-                elif rx.type == 'uhfr':
-                    rx.f.sendto(bytearray(string, 'UTF-8'), (rx.ip, 2202))
+                rx.socket_send(string)
             except:
                 logging.warning("TX ERROR IP: %s String: %s", rx.ip, string)
 

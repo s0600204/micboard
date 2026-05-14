@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   // entry: ['./js/script.js','./js/gif.js','./js/chart-smoothie.js','./js/demodata.js'],
   entry: {
-    app: ['whatwg-fetch', './js/app.js'],
+    app: ['./js/app.js'],
     venue: ['./js/venues.js'],
     web: ['./js/web.js'],
   },
@@ -29,17 +29,6 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [
-          // Creates `style` nodes from JS strings
-          "style-loader",
-          // Translates CSS into CommonJS
-          "css-loader",
-          // Compiles Sass to CSS
-          "sass-loader",
-        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,

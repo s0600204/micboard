@@ -6,8 +6,8 @@ import logging
 
 from tornado import websocket, web, ioloop, escape
 
-import shure
 import config
+import device_manager
 import discover
 import offline
 
@@ -22,10 +22,12 @@ def file_list(extension):
             files.append(file)
     return files
 
-# Its not efficecent to get the IP each time, but for now we'll assume server might have dynamic IP
-def localURL():
+# Its not efficient to get the IP each time, but for now we'll assume server might have dynamic IP
+def localURL(http_request=None):
     if 'local_url' in config.config_tree:
         return config.config_tree['local_url']
+    if http_request:
+        return f'{http_request.protocol}://{http_request.host}{os.path.dirname(http_request.path[1:])}'
     try:
         ip = socket.gethostbyname(socket.gethostname())
         return 'http://{}:{}'.format(ip, config.config_tree['port'])
@@ -33,7 +35,7 @@ def localURL():
         return 'https://micboard.io'
     return 'https://micboard.io'
 
-def micboard_json(network_devices):
+def micboard_json(network_devices, http_request):
     offline_devices = offline.offline_json()
     data = []
     discovered = []
@@ -46,14 +48,18 @@ def micboard_json(network_devices):
     gifs = file_list('.gif')
     jpgs = file_list('.jpg')
     mp4s = file_list('.mp4')
-    url = localURL()
+    url = localURL(http_request)
 
     for device in discover.time_filterd_discovered_list():
         discovered.append(device)
 
+    model_info = device_manager.get_supported_device_model_info()
+    model_types = device_manager.get_supported_device_model_types()
+
     return json.dumps({
         'receivers': data, 'url': url, 'gif': gifs, 'jpg': jpgs, 'mp4': mp4s,
-        'config': config.config_tree, 'discovered': discovered
+        'config': config.config_tree, 'discovered': discovered, 'models': model_types,
+        'model_info': model_info,
     }, sort_keys=True, indent=4)
 
 class IndexHandler(web.RequestHandler):
@@ -67,7 +73,7 @@ class AboutHandler(web.RequestHandler):
 class JsonHandler(web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        self.write(micboard_json(shure.NetworkDevices))
+        self.write(micboard_json(device_manager.NetworkDevices, self.request))
 
 class SocketHandler(websocket.WebSocketHandler):
     clients = set()
@@ -97,12 +103,12 @@ class SocketHandler(websocket.WebSocketHandler):
     @classmethod
     def ws_dump(cls):
         out = {}
-        if shure.chart_update_list:
-            out['chart-update'] = shure.chart_update_list
+        if device_manager.chart_update_list:
+            out['chart-update'] = device_manager.chart_update_list
 
-        if shure.data_update_list:
+        if device_manager.data_update_list:
             out['data-update'] = []
-            for ch in shure.data_update_list:
+            for ch in device_manager.data_update_list:
                 out['data-update'].append(ch.ch_json_mini())
 
         if config.group_update_list:
@@ -111,8 +117,8 @@ class SocketHandler(websocket.WebSocketHandler):
         if out:
             data = json.dumps(out)
             cls.broadcast(data)
-        del shure.chart_update_list[:]
-        del shure.data_update_list[:]
+        del device_manager.chart_update_list[:]
+        del device_manager.data_update_list[:]
         del config.group_update_list[:]
 
 class SlotHandler(web.RequestHandler):
