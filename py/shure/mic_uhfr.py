@@ -1,7 +1,7 @@
 from math import ceil
 
 from channel import ChannelDeviceReportEnum
-from mic import MSB, WirelessMicReportEnum
+from mic import MSB, WirelessMicBatteryStatus, WirelessMicReportEnum
 from shure.mic import WirelessShureMic
 from util import NetworkProtocol
 
@@ -11,6 +11,14 @@ class WirelessUHFRMic(WirelessShureMic):
     NAME = 'UHF-R'
 
     ANTENNA_COUNT = 2
+    BATTERY_LEVEL_MAP = {
+        '1': (1, WirelessMicBatteryStatus.Critical),
+        '2': (2, WirelessMicBatteryStatus.Critical),
+        '3': (3, WirelessMicBatteryStatus.Replace),
+        '4': (4, WirelessMicBatteryStatus.Good),
+        '5': (5, WirelessMicBatteryStatus.Good),
+        'U': (0, WirelessMicBatteryStatus.Unknown),
+    }
     MODELS = {
         'UR4S' : { 'channels': 1, },
         'UR4D' : { 'channels': 2, },

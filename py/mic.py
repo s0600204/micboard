@@ -35,13 +35,14 @@ def MSB(audio_level):
 class WirelessMic(ChannelDevice):
 
     ANTENNA_COUNT = 2
+    BATTERY_LEVEL_MAP = {}
     BATTERY_SEGMENTS = 5
 
     def __init__(self, rx, cfg):
         super().__init__(rx, cfg)
-        self.battery = 255
+        self.battery = 0
         self.battery_status = WirelessMicBatteryStatus.Unknown
-        self.prev_battery = 255
+        self.prev_battery = 0
         self.audio_level = 0
         self.rf_levels = [0] * self.ANTENNA_COUNT
         self.squelch = {'db': None, 'perc': None, 'str': None}
@@ -73,7 +74,17 @@ class WirelessMic(ChannelDevice):
         pass
 
     def set_battery(self, level):
-        pass
+        if level not in self.BATTERY_LEVEL_MAP:
+            return
+
+        self.battery = self.BATTERY_LEVEL_MAP[level][0]
+        self.battery_status = self.BATTERY_LEVEL_MAP[level][1]
+
+        if self.battery_status != WirelessMicBatteryStatus.Unknown:
+            self.prev_battery = level
+            self.timestamp = time.time()
+        elif (time.time() - self.timestamp) < BATTERY_TIMEOUT:
+            self.battery_status = self.BATTERY_LEVEL_MAP[self.prev_battery][1]
 
     def set_rf_levels(self, antenna, rf_level):
         pass
