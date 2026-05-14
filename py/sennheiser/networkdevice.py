@@ -4,6 +4,7 @@ from channel import chart_update_list, data_update_list
 from networkdevice import NetworkDevice
 from util import NetworkProtocol
 
+# ~ from sennheiser.charger_l6000 import L6000Charger
 from sennheiser.mic_mcp import WirelessMCPMic
 from sennheiser.mic_ewdx import WirelessEWDXMic
 
@@ -51,6 +52,7 @@ class SennheiserSSCNetworkDevice(NetworkDevice):
     PORT = 45
     DEVICE_CLASS_MAP = {
         'ewdx_mic': WirelessEWDXMic,
+        # ~ 'l6000_charger': L6000Charger,
     }
     NETWORK_PROTOCOL = NetworkProtocol.UDP
     # ~ NETWORK_SHARED_PORT = True
@@ -61,7 +63,7 @@ class SennheiserSSCNetworkDevice(NetworkDevice):
         ch_pos = None
         if osc_path.startswith('/rx'):
             ch_pos = 3
-        elif osc_path.startswith('/m/rx'):
+        elif osc_path.startswith('/m/rx') or osc_path.startswith('/slot'):
             ch_pos = 5
         elif osc_path.startswith('/mates/tx'):
             ch_pos = 9
